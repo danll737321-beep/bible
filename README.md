@@ -9,3 +9,7 @@
 經文來源：新標點和合本（神版）取自 BibleAquifer（CC0 公有領域）；King James Version（公有領域）。ESV 有版權，僅以外部連結到 esv.org。牧者觀點為轉述摘要，請以原書核對。
 
 GitHub Pages：Settings → Pages → Deploy from branch `main` / root。
+
+## iPhone 使用
+
+用 Safari 打開 GitHub Pages 網址 → 分享 → 「加入主畫面」，就會像 App 一樣全螢幕開啟。讀過的章節會快取，離線也能讀。手機上可左右滑動切換事件或章節，「字級」按鈕調整經文大小。

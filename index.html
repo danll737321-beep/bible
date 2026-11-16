@@ -2,7 +2,15 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="聖經時間軸">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14130f" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
 <title>聖經時間軸</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -14,6 +22,7 @@
    TYPE Noto Serif TC for titles and scripture, Noto Sans TC for working text
    LAYOUT laptop: band on top, timeline list left, sticky event panel right; phone: band, list, panel as full sheet */
 :root{color-scheme:light dark;--bg:light-dark(#ffffff,#14130f);--ink:light-dark(#1b1a17,#ece8df);--mute:light-dark(#62605a,#a8a397);--line:light-dark(#e4e1da,#2c2a24);--panel:light-dark(#f6f4ef,#1d1b17);--gold:light-dark(#9a6f17,#d9ad4f);--acc:light-dark(#a32d2d,#e07a6a)}
+:root{--fz:1}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 html,body{margin:0}
@@ -22,7 +31,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .serif{font-family:"Noto Serif TC",serif}
-header{padding:16px max(4vw,16px) 10px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+header{padding:max(16px,env(safe-area-inset-top)) max(4vw,16px,env(safe-area-inset-right)) 10px max(4vw,16px,env(safe-area-inset-left));display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
 h1{font:900 clamp(28px,4vw,40px)/1.05 "Noto Serif TC",serif;margin:0;letter-spacing:-.01em}
 h1 small{display:block;font:500 14px/1.4 "Noto Sans TC";color:var(--mute);letter-spacing:0;margin-top:4px}
 .tools{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto;align-items:center}
@@ -69,15 +78,15 @@ main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:0;bor
 .dates em{display:block;font-style:normal;color:var(--mute);font-size:14px}
 .verse{margin:18px 0 6px;padding:16px 18px;background:var(--panel);border-radius:12px;border-left:4px solid var(--ec)}
 .verse .ref{font-size:13.5px;color:var(--mute);margin-bottom:6px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.verse p{margin:4px 0;font:500 17px/1.75 "Noto Serif TC",serif}
-.verse p.en{font:400 16px/1.6 Georgia,"Times New Roman",serif;color:var(--mute)}
+.verse p{margin:4px 0;font:500 calc(17px*var(--fz))/1.75 "Noto Serif TC",serif}
+.verse p.en{font:400 calc(16px*var(--fz))/1.6 Georgia,"Times New Roman",serif;color:var(--mute)}
 .verse sup{font-size:11px;color:var(--mute);margin-right:3px}
 .lnk{background:none;border:0;padding:0;color:var(--gold);font-weight:500;text-decoration:underline;text-underline-offset:3px;min-height:32px}
 a.lnk{display:inline-flex;align-items:center}
 .cfx{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
 .cfx div{border-top:3px solid var(--ec);padding-top:8px}
 .cfx h4,.sec h3{margin:0 0 4px;font-size:14px;color:var(--mute);font-weight:700}
-.cfx p{margin:0;font-size:15.5px}
+.cfx p{margin:0;font-size:calc(15.5px*var(--fz))}
 .sec{margin-top:26px}
 .sec h3{font:700 19px/1.3 "Noto Serif TC",serif;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .sec h3 small{font:400 13px "Noto Sans TC";color:var(--mute)}
@@ -95,7 +104,7 @@ a.lnk{display:inline-flex;align-items:center}
 .k-p{background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc)}
 .k-t{background:var(--panel);color:var(--mute);border:1px solid var(--line)}
 .k-a{background:color-mix(in srgb,#2d6aa3 14%,transparent);color:light-dark(#2d6aa3,#8cb8e6)}
-.view p{margin:0;font-size:15.5px}
+.view p{margin:0;font-size:calc(15.5px*var(--fz))}
 .view.pw{border-color:#1f5f8b;border-width:2px;background:color-mix(in srgb,#1f5f8b 6%,var(--bg))}
 .pwera{margin:10px 0 4px;border:1px solid color-mix(in srgb,#1f5f8b 40%,var(--line));border-radius:10px;padding:8px 12px;background:color-mix(in srgb,#1f5f8b 5%,var(--bg))}
 .pwera summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;min-height:32px;padding-top:4px}
@@ -122,8 +131,8 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 .db{padding:16px 20px 28px}
 .rv{display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px 8px;margin-bottom:10px}
 .rv .n{color:var(--mute);font-size:12px;padding-top:6px;text-align:right}
-.rv .z{font:500 17px/1.75 "Noto Serif TC",serif}
-.rv .e{grid-column:2;font:400 15.5px/1.55 Georgia,serif;color:var(--mute)}
+.rv .z{font:500 calc(17px*var(--fz))/1.75 "Noto Serif TC",serif}
+.rv .e{grid-column:2;font:400 calc(15.5px*var(--fz))/1.55 Georgia,serif;color:var(--mute)}
 .rv.hi .z,.rv.hi .e{background:color-mix(in srgb,var(--gold) 16%,transparent)}
 .pl{display:grid;gap:8px}
 .pl .pr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 12px}
@@ -131,26 +140,44 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 .scroll{overflow-x:auto}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
+.pnav,.rfoot{display:none}
+.rfoot{gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg);position:sticky;bottom:0}
+.pnav button,.rfoot button{flex:1}
 @media(max-width:900px){
+body.sheet{overflow:hidden}
+.pnav{display:flex;gap:8px;position:sticky;bottom:0;margin:24px -16px 0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--line);z-index:3}
 main{grid-template-columns:minmax(0,1fr)}
 #list{border-right:0;padding-right:max(4vw,16px)}
-#panel{position:fixed;inset:0;height:100%;z-index:20;background:var(--bg);padding:0 16px 80px;transform:translateY(100%);transition:transform .25s}
+#panel{position:fixed;inset:0;height:100%;z-index:20;background:var(--bg);padding:0 max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));overscroll-behavior:contain;transform:translateY(100%);transition:transform .25s}
 #panel.open{transform:none}
-.sheetbar{display:flex;position:sticky;top:0;background:var(--bg);margin:0 -16px;padding:10px 16px;border-bottom:1px solid var(--line);z-index:3;gap:8px;align-items:center}
+.sheetbar{display:flex;position:sticky;top:0;background:var(--bg);margin:0 -16px;padding:max(10px,env(safe-area-inset-top)) 16px 10px;border-bottom:1px solid var(--line);z-index:3;gap:8px;align-items:center}
 .sheetbar span{margin-right:auto;font-size:14px;color:var(--mute)}
 }
-@media(max-width:600px){.cfx{grid-template-columns:minmax(0,1fr)}form.nf .row{grid-template-columns:minmax(0,1fr)}.ev{grid-template-columns:72px minmax(0,1fr)}.era{flex-basis:84px;min-height:84px}.era i{display:none}#q{width:100%}.tools{width:100%;margin-left:0}}
+@media(max-width:600px){
+h1 small .long{display:none}
+.tools{display:grid;grid-template-columns:auto auto 1fr;gap:8px}
+.tools #q{grid-column:1/-1;width:100%}
+.ehead{flex-wrap:wrap;gap:2px 10px;padding-top:14px}
+.ehead span{font-size:13px;flex-basis:100%}
+dialog{overflow:hidden;width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;margin:0;border-radius:0;display:none;flex-direction:column}
+dialog[open]{display:flex}
+.db{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:20px}
+.dh{padding-top:max(14px,env(safe-area-inset-top))}
+.dh #rPrev,.dh #rNext{display:none}
+.rfoot{display:flex}
+.cfx{grid-template-columns:minmax(0,1fr)}form.nf .row{grid-template-columns:minmax(0,1fr)}.ev{grid-template-columns:72px minmax(0,1fr)}.era{flex-basis:84px;min-height:84px}.era i{display:none}#q{width:100%}.tools{width:100%;margin-left:0}}
 @media(prefers-reduced-motion:reduce){#panel{transition:none}}
 </style>
 </head>
 <body>
 <header>
-  <h1>聖經時間軸<small>Bible Timeline · 以大衛・鮑森《Unlocking the Bible》為主軸：前因後果、預表與應驗、牧者觀點</small></h1>
+  <h1>聖經時間軸<small>Bible Timeline · 以大衛・鮑森為主軸<span class="long">：《Unlocking the Bible》、前因後果、預表與應驗、牧者觀點</span></small></h1>
   <div class="tools">
     <input id="q" class="inp" type="search" placeholder="搜尋事件、人物、經文" aria-label="搜尋">
     <div class="seg" id="lang" role="group" aria-label="經文語言">
       <button data-l="zh">中</button><button data-l="both" class="on">雙語</button><button data-l="en">EN</button>
     </div>
+    <button class="btn" id="bFz" aria-label="字級">字級 中</button>
     <button class="btn" id="bSet">牧者名單</button>
   </div>
 </header>
@@ -161,7 +188,7 @@ main{grid-template-columns:minmax(0,1fr)}
   <article id="panel" aria-live="polite"></article>
 </main>
 
-<dialog id="dRead"><div class="dh"><h3 id="rTitle"></h3><button class="btn" id="rPrev">上一章</button><button class="btn" id="rNext">下一章</button><button class="btn" data-close>關閉</button></div><div class="db" id="rBody"></div></dialog>
+<dialog id="dRead" aria-label="讀經"><div class="dh"><h3 id="rTitle"></h3><button class="btn" id="rPrev">上一章</button><button class="btn" id="rNext">下一章</button><button class="btn" data-close>關閉</button></div><div class="db" id="rBody"></div><div class="rfoot"><button class="btn" data-rp="-1">上一章</button><button class="btn" data-rp="1">下一章</button></div></dialog>
 <dialog id="dSet"><div class="dh"><h3>牧者名單與資料來源</h3><button class="btn" data-close>關閉</button></div><div class="db" id="sBody"></div></dialog>
 <div class="toast" id="toast"></div>
 
@@ -279,7 +306,7 @@ function renderPanel(){
   const tys=(e.ty||[]).map(t=>({id:t.to,n:t.n,dir:"→"})).concat((back[e.id]||[]).map(t=>({id:t.from,n:t.n,dir:"←"})));
     const views=e.v||[];
   P.style.setProperty("--ec",r.c);
-  P.innerHTML=`<div class="sheetbar"><span>${esc(r.n)}</span><button class="btn" id="pPrev" aria-label="上一個事件">上一個</button><button class="btn" id="pNext" aria-label="下一個事件">下一個</button><button class="btn" id="pClose">關閉</button></div>
+  P.innerHTML=`<div class="sheetbar"><span>${esc(r.n)}</span><button class="btn" id="pClose">關閉</button></div>
   <div style="padding-top:16px"><span class="kick" style="background:${r.c}">${esc(r.n)} · ${esc(r.en)}</span>
   <h2 class="ptitle">${esc(e.t)}</h2><div class="pen">${esc(e.en)}${e.p?" · "+esc(e.p):""}</div>
   <p class="dates"><b>${esc(e.d)}</b>${e.alt?`<em>其他說法：${esc(e.alt)}</em>`:""}</p>
@@ -291,7 +318,7 @@ function renderPanel(){
   <div class="sec"><h3>牧者觀點<small>你喜歡的牧者怎麼解讀這段經文</small></h3>
   ${views.length?views.map(v=>{const isP=v.k==="p",pp=isP?pastor(v.w):null;return`<div class="view${v.w==="pawson"?" pw":""}"><div class="who"><b>${esc(isP?pp.n+" "+pp.en:v.w)}</b><span class="kind k-${v.k}">${v.w==="pawson"?"主軸・轉述":isP?"牧者・轉述":v.k==="a"?"學術討論":"神學傳統"}</span>${v.tg?`<span class="kind k-a">${esc(v.tg)}</span>`:""}</div><p>${esc(v.s)}</p>${v.src?`<div class="src">出處：${esc(v.src)}。內容為轉述摘要，非原文引用，請以原書核對。</div>`:""}</div>`}).join(""):`<p class="stat">這個事件還沒有收錄牧者觀點。</p>`}
   </div>
-  </div>`;
+  </div><div class="pnav"><button class="btn" id="pPrev">← 上一個事件</button><button class="btn" id="pNext">下一個事件 →</button></div>`;
   refs.forEach((x,i)=>versesHtml(x,S.lang).then(h=>{if(tok===panelToken){const el=$("#vs"+i);if(el)el.innerHTML=h}}));
 }
 function noteForm(ev){
@@ -311,7 +338,7 @@ let RD={b:"GEN",c:1,hi:null};
 async function openRead(b,c,hi){
   RD={b,c,hi};const d=$("#dRead");if(!d.open)d.showModal();
   $("#rTitle").textContent=BOOK[b].zh+" "+c+" 章 · "+BOOK[b].en+" "+c;
-  $("#rPrev").disabled=c<=1;$("#rNext").disabled=c>=BOOK[b].n;
+  $("#rPrev").disabled=c<=1;$("#rNext").disabled=c>=BOOK[b].n;document.querySelector("[data-rp='-1']").disabled=c<=1;document.querySelector("[data-rp='1']").disabled=c>=BOOK[b].n;
   $("#rBody").innerHTML=`<p class="stat">載入中…</p>`;
   try{
     const [zh,en]=await Promise.all([S.lang!=="en"?loadBook(b,"zh"):null,S.lang!=="zh"?loadBook(b,"en"):null]);
@@ -320,7 +347,7 @@ async function openRead(b,c,hi){
     for(let v=1;v<=n;v++)h+=`<div class="rv${v>=a&&v<=z?" hi":""}" id="rv${v}"><div class="n">${v}</div>${zh?`<div class="z">${esc(zh[c-1][v-1]||"")}</div>`:""}${en?`<div class="${zh?"e":"z"}" ${zh?"":"style=\"font-family:Georgia,serif\""}>${esc(en[c-1][v-1]||"")}</div>`:""}</div>`;
     const evs=EV.filter(e=>e.rd===b+" "+c||(e.r||"").split(";").some(x=>{const p=parseRef(x);return p&&p.b===b&&p.c===c}));
     if(evs.length)h=`<p class="stat">本章相關事件：${evs.map(e=>`<button class="lnk" data-ev="${e.id}">${esc(e.t)}</button>`).join("、")}</p>`+h;
-    $("#rBody").innerHTML=h;if(a){const el=$("#rv"+a);if(el)el.scrollIntoView({block:"center"})}else $("#dRead").scrollTop=0;
+    $("#rBody").innerHTML=h;if(a){const el=$("#rv"+a);if(el)el.scrollIntoView({block:"center"})}else{$("#dRead").scrollTop=0;$("#rBody").scrollTop=0}
   }catch(e){$("#rBody").innerHTML=`<p>經文載入失敗，請重新整理。</p>`}
 }
 
@@ -340,7 +367,7 @@ let pEdit=null;
 /* ---------- events ---------- */
 function select(id,push=true){
   if(!byId[id])return;S.sel=id;S.editing=null;renderList();renderPanel();
-  const P=$("#panel");P.classList.add("open");P.scrollTop=0;
+  const P=$("#panel");P.classList.add("open");P.scrollTop=0;if(window.innerWidth<=900)document.body.classList.add("sheet");
   if(push&&location.hash!=="#"+id)history.replaceState(null,"","#"+id);
   if(push){const b=document.querySelector(`.ev[data-ev="${id}"]`);if(b&&window.innerWidth>900)b.scrollIntoView({block:"nearest"})}
 }
@@ -353,12 +380,14 @@ document.addEventListener("click",async ev=>{
   if(t.dataset.l){S.lang=t.dataset.l;LS.set("bt-lang",S.lang);try{localStorage.setItem("bt-lang",S.lang)}catch(e){}document.querySelectorAll("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l===S.lang));renderPanel();if($("#dRead").open)openRead(RD.b,RD.c,RD.hi);return}
   if(t.dataset.read){const [b,c]=t.dataset.read.split(" ");openRead(b,+c,t.dataset.hi);return}
   if(t.dataset.close!==undefined){t.closest("dialog").close();return}
+  if(t.dataset.rp){openRead(RD.b,RD.c+ +t.dataset.rp);return}
   if(t.dataset.edit){S.editing=t.dataset.edit;renderPanel();const f=$("#nfT");if(f){f.focus();f.scrollIntoView({block:"center"})}return}
   if(t.dataset.del){const btn=t;if(btn.dataset.armed){await delNote(btn.dataset.del)}else{btn.dataset.armed=1;btn.textContent="再按一次確認刪除";setTimeout(()=>{if(btn.isConnected){delete btn.dataset.armed;btn.textContent="刪除"}},3000)}return}
   if(t.dataset.pe!==undefined){pEdit=+t.dataset.pe;const p=S.pastors[pEdit];$("#pfN").value=p.n;$("#pfE").value=p.en||"";$("#pfB").value=p.note||"";$("#pfGo").textContent="儲存修改";$("#pfN").focus();return}
   if(t.dataset.pd!==undefined){const i=+t.dataset.pd;if(t.dataset.armed){S.pastors.splice(i,1);await savePastors();renderSet()}else{t.dataset.armed=1;t.textContent="再按一次確認"}return}
   switch(t.id){
-    case"pClose":$("#panel").classList.remove("open");break;
+    case"pClose":closeSheet();break;
+    case"bFz":setFz((S.fz+1)%3);break;
     case"pPrev":step(-1);break;case"pNext":step(1);break;
     case"rPrev":openRead(RD.b,RD.c-1);break;case"rNext":openRead(RD.b,RD.c+1);break;
     case"bNotes":$("#dNotes").showModal();renderNotes();break;
@@ -388,6 +417,17 @@ document.addEventListener("submit",async ev=>{
 });
 let qt;$("#q").addEventListener("input",e=>{clearTimeout(qt);qt=setTimeout(()=>{S.q=e.target.value.trim();renderBand();renderList()},150)});
 document.addEventListener("keydown",e=>{if(e.target.matches("input,textarea,select"))return;if(e.key==="ArrowDown"||e.key==="j"){if(S.sel){e.preventDefault();step(1)}}if(e.key==="ArrowUp"||e.key==="k"){if(S.sel){e.preventDefault();step(-1)}}});
+const FZ=[[0.92,"小"],[1,"中"],[1.15,"大"]];
+S.fz=+LS.get("bt-fz",1);
+function setFz(i){S.fz=i;document.documentElement.style.setProperty("--fz",FZ[i][0]);$("#bFz").textContent="字級 "+FZ[i][1];LS.set("bt-fz",i)}
+setFz(S.fz in FZ?S.fz:1);
+function closeSheet(){$("#panel").classList.remove("open");document.body.classList.remove("sheet")}
+function swipe(el,fn){let x0,y0,t0;el.addEventListener("touchstart",e=>{const t=e.touches[0];x0=t.clientX;y0=t.clientY;t0=Date.now()},{passive:true});
+  el.addEventListener("touchend",e=>{if(x0==null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;
+    if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.8&&Date.now()-t0<600&&!e.target.closest(".band,.themes,.rel,.scroll"))fn(dx<0?1:-1)},{passive:true})}
+swipe($("#panel"),d=>{if(window.innerWidth<=900)step(d)});
+swipe($("#rBody"),d=>{const c=RD.c+d;if(c>=1&&c<=BOOK[RD.b].n)openRead(RD.b,c)});
+if("serviceWorker" in navigator&&location.protocol==="https:"&&/github\.io$/.test(location.hostname)){navigator.serviceWorker.register("sw.js").catch(()=>{})}
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2600)}
 function fromHash(){const h=location.hash.slice(1);if(byId[h])select(h,false)}
 window.addEventListener("hashchange",fromHash);
