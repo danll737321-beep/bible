@@ -96,6 +96,13 @@ a.lnk{display:inline-flex;align-items:center}
 .k-t{background:var(--panel);color:var(--mute);border:1px solid var(--line)}
 .k-a{background:color-mix(in srgb,#2d6aa3 14%,transparent);color:light-dark(#2d6aa3,#8cb8e6)}
 .view p{margin:0;font-size:15.5px}
+.view.pw{border-color:#1f5f8b;border-width:2px;background:color-mix(in srgb,#1f5f8b 6%,var(--bg))}
+.pwera{margin:10px 0 4px;border:1px solid color-mix(in srgb,#1f5f8b 40%,var(--line));border-radius:10px;padding:8px 12px;background:color-mix(in srgb,#1f5f8b 5%,var(--bg))}
+.pwera summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;min-height:32px;padding-top:4px}
+.pwera summary b{color:light-dark(#1f5f8b,#8cc3ea)}
+.pwera summary span{font-size:13.5px;color:var(--mute)}
+.pwera p{margin:6px 0 2px;font-size:15px}
+.pwera .src{font-size:12.5px;color:var(--mute)}
 .view .src{font-size:13px;color:var(--mute);margin-top:6px}
 .note{border-left:3px solid var(--acc);padding:8px 0 8px 12px;margin-bottom:12px}
 .note .h{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:14px}
@@ -138,7 +145,7 @@ main{grid-template-columns:minmax(0,1fr)}
 </head>
 <body>
 <header>
-  <h1>聖經時間軸<small>Bible Timeline · 舊約到新約的前因後果、預表與應驗、牧者觀點</small></h1>
+  <h1>聖經時間軸<small>Bible Timeline · 以大衛・鮑森《Unlocking the Bible》為主軸：前因後果、預表與應驗、牧者觀點</small></h1>
   <div class="tools">
     <input id="q" class="inp" type="search" placeholder="搜尋事件、人物、經文" aria-label="搜尋">
     <div class="seg" id="lang" role="group" aria-label="經文語言">
@@ -162,13 +169,15 @@ main{grid-template-columns:minmax(0,1fr)}
 <script src="data/eras.js"></script>
 <script src="data/events-ot.js"></script>
 <script src="data/events-nt.js"></script>
+<script src="data/pawson.js"></script>
 <script>
 {
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ERAS=window.ERAS,EV=window.EVENTS,TH=window.THEMES,BOOK={};
 window.BOOKS.forEach((b,i)=>BOOK[b[0]]={zh:b[1],en:b[2],n:b[3],i});
-EV.forEach(e=>e.v=(e.v||[]).filter(v=>v.k==="p"));
+EV.forEach(e=>{e.v=(e.v||[]).filter(v=>v.k==="p");const pw=(window.PAWSON||{})[e.id];if(pw){e.v.unshift({k:"p",w:"pawson",s:pw.s,src:pw.src,tg:pw.tg});(e.th=e.th||[]).push("pawson")}});
+const PE=window.PAWSON_ERAS||[];
 const byId={};EV.forEach(e=>byId[e.id]=e);
 const back={};EV.forEach(e=>(e.ty||[]).forEach(t=>(back[t.to]=back[t.to]||[]).push({from:e.id,n:t.n})));
 const S={era:null,theme:null,q:"",sel:null,lang:"both",notes:[],pastors:window.DEFAULT_PASTORS.slice(),store:"local",editing:null};
@@ -251,6 +260,7 @@ function renderList(){
   ERAS.forEach((r,i)=>{
     const es=EV.filter(e=>e.e===i&&match(e));if(!es.length)return;any=true;
     h+=`<div class="ehead" id="era-${i}" style="border-color:${r.c}"><h2 style="color:${r.c}">${esc(r.n)}</h2><span>${esc(r.en)} · ${esc(r.d)} · ${esc(r.b)}</span></div>`;
+    if(PE[i])h+=`<details class="pwera"><summary><b>鮑森導讀</b><span>${esc(PE[i].v)} ${esc(PE[i].ch)}</span></summary><p>${esc(PE[i].s)}</p><div class="src">轉述摘要，非原文引用。</div></details>`;
     h+=es.map(e=>{const tyc=(e.ty||[]).length+(back[e.id]||[]).length;
       return`<button class="ev${S.sel===e.id?" sel":""}" style="--ec:${r.c}" data-ev="${e.id}"><div class="dt">${esc(e.d)}</div><div><div class="tt">${esc(e.t)}</div><div class="en">${esc(e.en)}${e.r?" · "+esc(refLabel(parseRef(e.r.split(";")[0]),"zh")):""}</div><div class="meta">${(e.v||[]).length?`<span class="tag">牧者觀點 ${e.v.length}</span>`:""}${tyc?`<span class="tag gold">預表／應驗 ${tyc}</span>`:""}</div></div></button>`}).join("");
   });
@@ -263,7 +273,7 @@ function renderList(){
 let panelToken=0;
 function renderPanel(){
   const e=byId[S.sel];const P=$("#panel");
-  if(!e){P.innerHTML=`<div style="padding-top:20px"><p class="kick" style="background:${ERAS[0].c}">從這裡開始</p><h2 class="ptitle">點選左邊的任何事件</h2><p>每張事件卡有雙語關鍵經文、背景與前因後果、舊約與新約的預表連線，以及你喜歡的牧者的觀點。</p><p class="stat">共 ${EV.length} 個事件、14 個時代。經文：和合本（神版）與 KJV，皆為公有領域；ESV 有版權，以外部連結開啟。</p></div>`;return}
+  if(!e){P.innerHTML=`<div style="padding-top:20px"><p class="kick" style="background:${ERAS[0].c}">從這裡開始</p><h2 class="ptitle">點選左邊的任何事件</h2><p>每張事件卡有雙語關鍵經文、背景與前因後果、舊約與新約的預表連線，以及以大衛・鮑森為主軸的牧者觀點；每個時代開頭有鮑森導讀，上方「鮑森重點」可以只看他強調的事件。</p><p class="stat">共 ${EV.length} 個事件、14 個時代。經文：和合本（神版）與 KJV，皆為公有領域；ESV 有版權，以外部連結開啟。</p></div>`;return}
   const r=ERAS[e.e],tok=++panelToken;
   const refs=(e.r||"").split(";").filter(Boolean);
   const tys=(e.ty||[]).map(t=>({id:t.to,n:t.n,dir:"→"})).concat((back[e.id]||[]).map(t=>({id:t.from,n:t.n,dir:"←"})));
@@ -279,7 +289,7 @@ function renderPanel(){
   ${(e.l||[]).length?`<div class="sec"><h3>相關事件<small>順著因果鏈讀下去</small></h3><div class="rel">${e.l.map(id=>byId[id]?`<button class="chip" data-ev="${id}"><span class="dot" style="background:${ERAS[byId[id].e].c}"></span>${esc(byId[id].t)}</button>`:"").join("")}</div></div>`:""}
   ${tys.length?`<div class="sec"><h3>預表與應驗<small>舊約 ↔ 新約</small></h3><div class="ty">${tys.map(t=>byId[t.id]?`<button data-ev="${t.id}"><span class="arr">${t.dir}</span><div><b>${esc(byId[t.id].t)}（${esc(ERAS[byId[t.id].e].n)}）</b><span>${esc(t.n)}</span></div></button>`:"").join("")}</div></div>`:""}
   <div class="sec"><h3>牧者觀點<small>你喜歡的牧者怎麼解讀這段經文</small></h3>
-  ${views.length?views.map(v=>{const isP=v.k==="p",pp=isP?pastor(v.w):null;return`<div class="view"><div class="who"><b>${esc(isP?pp.n+" "+pp.en:v.w)}</b><span class="kind k-${v.k}">${isP?"牧者・轉述":v.k==="a"?"學術討論":"神學傳統"}</span></div><p>${esc(v.s)}</p>${v.src?`<div class="src">出處：${esc(v.src)}。內容為轉述摘要，非原文引用，請以原書核對。</div>`:""}</div>`}).join(""):`<p class="stat">這個事件還沒有收錄牧者觀點。</p>`}
+  ${views.length?views.map(v=>{const isP=v.k==="p",pp=isP?pastor(v.w):null;return`<div class="view${v.w==="pawson"?" pw":""}"><div class="who"><b>${esc(isP?pp.n+" "+pp.en:v.w)}</b><span class="kind k-${v.k}">${v.w==="pawson"?"主軸・轉述":isP?"牧者・轉述":v.k==="a"?"學術討論":"神學傳統"}</span>${v.tg?`<span class="kind k-a">${esc(v.tg)}</span>`:""}</div><p>${esc(v.s)}</p>${v.src?`<div class="src">出處：${esc(v.src)}。內容為轉述摘要，非原文引用，請以原書核對。</div>`:""}</div>`}).join(""):`<p class="stat">這個事件還沒有收錄牧者觀點。</p>`}
   </div>
   </div>`;
   refs.forEach((x,i)=>versesHtml(x,S.lang).then(h=>{if(tok===panelToken){const el=$("#vs"+i);if(el)el.innerHTML=h}}));
