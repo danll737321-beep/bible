@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>聖經時間軸</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday study tool, calm and reverent, dense like a study Bible
+   IDEA the fold-out chronological wall chart printed in the back of a study Bible
+   PICTURE a full-width band of fourteen era fields that is both the map and the navigation
+   COLOUR white ground, near-black ink, era colours as flat fields, gold for typology links
+   TYPE Noto Serif TC for titles and scripture, Noto Sans TC for working text
+   LAYOUT laptop: band on top, timeline list left, sticky event panel right; phone: band, list, panel as full sheet */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#14130f);--ink:light-dark(#1b1a17,#ece8df);--mute:light-dark(#62605a,#a8a397);--line:light-dark(#e4e1da,#2c2a24);--panel:light-dark(#f6f4ef,#1d1b17);--gold:light-dark(#9a6f17,#d9ad4f);--acc:light-dark(#a32d2d,#e07a6a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans TC",system-ui,sans-serif;overflow-x:clip}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.serif{font-family:"Noto Serif TC",serif}
+header{padding:16px max(4vw,16px) 10px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+h1{font:900 clamp(28px,4vw,40px)/1.05 "Noto Serif TC",serif;margin:0;letter-spacing:-.01em}
+h1 small{display:block;font:500 14px/1.4 "Noto Sans TC";color:var(--mute);letter-spacing:0;margin-top:4px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto;align-items:center}
+.inp{height:44px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:0 12px;font-size:16px}
+#q{width:min(240px,60vw)}
+.btn{height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-weight:500;white-space:nowrap}
+.btn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{height:42px;padding:0 12px;border:0;background:transparent}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.band{display:flex;overflow-x:auto;scrollbar-width:thin;border-block:1px solid var(--line)}
+.era{flex:1 0 96px;min-height:96px;padding:10px 10px 8px;color:#fff;border:0;text-align:left;display:flex;flex-direction:column;justify-content:space-between;position:relative;transition:filter .15s}
+.era b{font:700 15px/1.25 "Noto Serif TC",serif}
+.era span{font-size:12.5px;opacity:.92;line-height:1.3}
+.era i{font-style:normal;font-size:13px;opacity:.85}
+.era.dim{filter:saturate(.25) brightness(1.1)}
+.era.cur::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--bg)}
+.themes{display:flex;gap:8px;overflow-x:auto;padding:10px max(4vw,16px)}
+.chip{flex:none;height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg);white-space:nowrap;font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.chip .dot{width:9px;height:9px;border-radius:50%}
+.chip.on{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:0;border-top:1px solid var(--line)}
+#list{padding:8px max(2vw,16px) 80px max(4vw,16px);border-right:1px solid var(--line)}
+.ehead{position:sticky;top:0;z-index:2;background:var(--bg);padding:16px 0 8px;display:flex;align-items:baseline;gap:10px;border-bottom:2px solid}
+.ehead h2{font:700 20px/1.2 "Noto Serif TC",serif;margin:0}
+.ehead span{color:var(--mute);font-size:13.5px}
+.ev{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:12px 6px;border-radius:0}
+.ev:hover{background:var(--panel)}
+.ev.sel{background:var(--panel);box-shadow:inset 4px 0 0 var(--ec)}
+.ev .dt{font-size:13px;color:var(--mute);line-height:1.35;padding-top:3px}
+.ev .tt{font:700 16.5px/1.35 "Noto Serif TC",serif}
+.ev .en{font-size:13px;color:var(--mute)}
+.ev .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.tag{font-size:12.5px;padding:1px 8px;border-radius:6px;background:var(--panel);border:1px solid var(--line);white-space:nowrap}
+.tag.gold{color:var(--gold);border-color:color-mix(in srgb,var(--gold) 40%,transparent)}
+.tag.note{color:var(--acc);border-color:color-mix(in srgb,var(--acc) 40%,transparent)}
+.empty{padding:40px 8px;color:var(--mute)}
+#panel{position:sticky;top:0;height:100vh;overflow-y:auto;padding:24px max(4vw,20px) 80px clamp(20px,3vw,40px)}
+.sheetbar{display:none}
+.kick{font-size:14px;font-weight:700;padding:3px 10px;border-radius:6px;color:#fff;display:inline-block}
+.ptitle{font:900 clamp(28px,3.4vw,40px)/1.08 "Noto Serif TC",serif;margin:10px 0 2px;letter-spacing:-.01em;text-wrap:balance}
+.pen{color:var(--mute);font-size:15px}
+.dates{margin:10px 0 0;font-size:15px}
+.dates em{display:block;font-style:normal;color:var(--mute);font-size:14px}
+.verse{margin:18px 0 6px;padding:16px 18px;background:var(--panel);border-radius:12px;border-left:4px solid var(--ec)}
+.verse .ref{font-size:13.5px;color:var(--mute);margin-bottom:6px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.verse p{margin:4px 0;font:500 17px/1.75 "Noto Serif TC",serif}
+.verse p.en{font:400 16px/1.6 Georgia,"Times New Roman",serif;color:var(--mute)}
+.verse sup{font-size:11px;color:var(--mute);margin-right:3px}
+.lnk{background:none;border:0;padding:0;color:var(--gold);font-weight:500;text-decoration:underline;text-underline-offset:3px;min-height:32px}
+a.lnk{display:inline-flex;align-items:center}
+.cfx{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.cfx div{border-top:3px solid var(--ec);padding-top:8px}
+.cfx h4,.sec h3{margin:0 0 4px;font-size:14px;color:var(--mute);font-weight:700}
+.cfx p{margin:0;font-size:15.5px}
+.sec{margin-top:26px}
+.sec h3{font:700 19px/1.3 "Noto Serif TC",serif;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sec h3 small{font:400 13px "Noto Sans TC";color:var(--mute)}
+.rel{display:flex;flex-wrap:wrap;gap:8px}
+.rel button{min-height:40px}
+.ty{display:grid;gap:8px}
+.ty button{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;text-align:left;border:1px solid color-mix(in srgb,var(--gold) 35%,var(--line));background:color-mix(in srgb,var(--gold) 7%,var(--bg));border-radius:10px;padding:10px 12px}
+.ty .arr{color:var(--gold);font-weight:700}
+.ty b{display:block;font-family:"Noto Serif TC",serif}
+.ty span{font-size:14.5px;color:var(--mute)}
+.view{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.view .who{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;margin-bottom:4px}
+.view .who b{font-family:"Noto Serif TC",serif;font-size:16px}
+.view .kind{font-size:12px;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.k-p{background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc)}
+.k-t{background:var(--panel);color:var(--mute);border:1px solid var(--line)}
+.k-a{background:color-mix(in srgb,#2d6aa3 14%,transparent);color:light-dark(#2d6aa3,#8cb8e6)}
+.view p{margin:0;font-size:15.5px}
+.view .src{font-size:13px;color:var(--mute);margin-top:6px}
+.note{border-left:3px solid var(--acc);padding:8px 0 8px 12px;margin-bottom:12px}
+.note .h{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:14px}
+.note .h b{font-family:"Noto Serif TC",serif;font-size:15.5px}
+.note p{margin:4px 0;white-space:pre-wrap}
+.note .src{font-size:13px;color:var(--mute)}
+.note .act{display:flex;gap:14px}
+form.nf{display:grid;gap:10px;background:var(--panel);padding:14px;border-radius:12px}
+form.nf .row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+label{font-size:13.5px;color:var(--mute);display:grid;gap:4px}
+textarea.inp{height:auto;min-height:110px;padding:10px 12px;line-height:1.55}
+.stat{font-size:13px;color:var(--mute);margin-top:6px}
+dialog{border:0;border-radius:16px;padding:0;width:min(760px,94vw);max-height:90vh;background:var(--bg);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.dh{position:sticky;top:0;background:var(--bg);display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);z-index:1}
+.dh h3{margin:0 auto 0 0;font:700 20px "Noto Serif TC",serif}
+.db{padding:16px 20px 28px}
+.rv{display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px 8px;margin-bottom:10px}
+.rv .n{color:var(--mute);font-size:12px;padding-top:6px;text-align:right}
+.rv .z{font:500 17px/1.75 "Noto Serif TC",serif}
+.rv .e{grid-column:2;font:400 15.5px/1.55 Georgia,serif;color:var(--mute)}
+.rv.hi .z,.rv.hi .e{background:color-mix(in srgb,var(--gold) 16%,transparent)}
+.pl{display:grid;gap:8px}
+.pl .pr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.pl .pr small{color:var(--mute);display:block}
+.scroll{overflow-x:auto}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@media(max-width:900px){
+main{grid-template-columns:minmax(0,1fr)}
+#list{border-right:0;padding-right:max(4vw,16px)}
+#panel{position:fixed;inset:0;height:100%;z-index:20;background:var(--bg);padding:0 16px 80px;transform:translateY(100%);transition:transform .25s}
+#panel.open{transform:none}
+.sheetbar{display:flex;position:sticky;top:0;background:var(--bg);margin:0 -16px;padding:10px 16px;border-bottom:1px solid var(--line);z-index:3;gap:8px;align-items:center}
+.sheetbar span{margin-right:auto;font-size:14px;color:var(--mute)}
+}
+@media(max-width:600px){.cfx{grid-template-columns:minmax(0,1fr)}form.nf .row{grid-template-columns:minmax(0,1fr)}.ev{grid-template-columns:72px minmax(0,1fr)}.era{flex-basis:84px;min-height:84px}.era i{display:none}#q{width:100%}.tools{width:100%;margin-left:0}}
+@media(prefers-reduced-motion:reduce){#panel{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>聖經時間軸<small>Bible Timeline · 舊約到新約的前因後果、預表與應驗、牧者觀點</small></h1>
+  <div class="tools">
+    <input id="q" class="inp" type="search" placeholder="搜尋事件、人物、經文" aria-label="搜尋">
+    <div class="seg" id="lang" role="group" aria-label="經文語言">
+      <button data-l="zh">中</button><button data-l="both" class="on">雙語</button><button data-l="en">EN</button>
+    </div>
+    <button class="btn" id="bSet">牧者名單</button>
+  </div>
+</header>
+<nav class="band" id="band" aria-label="時代"></nav>
+<div class="themes" id="themes" aria-label="神學主題路徑"></div>
+<main>
+  <section id="list" aria-label="事件列表"></section>
+  <article id="panel" aria-live="polite"></article>
+</main>
+
+<dialog id="dRead"><div class="dh"><h3 id="rTitle"></h3><button class="btn" id="rPrev">上一章</button><button class="btn" id="rNext">下一章</button><button class="btn" data-close>關閉</button></div><div class="db" id="rBody"></div></dialog>
+<dialog id="dSet"><div class="dh"><h3>牧者名單與資料來源</h3><button class="btn" data-close>關閉</button></div><div class="db" id="sBody"></div></dialog>
+<div class="toast" id="toast"></div>
+
+<script src="data/books.js"></script>
+<script src="data/eras.js"></script>
+<script src="data/events-ot.js"></script>
+<script src="data/events-nt.js"></script>
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ERAS=window.ERAS,EV=window.EVENTS,TH=window.THEMES,BOOK={};
+window.BOOKS.forEach((b,i)=>BOOK[b[0]]={zh:b[1],en:b[2],n:b[3],i});
+EV.forEach(e=>e.v=(e.v||[]).filter(v=>v.k==="p"));
+const byId={};EV.forEach(e=>byId[e.id]=e);
+const back={};EV.forEach(e=>(e.ty||[]).forEach(t=>(back[t.to]=back[t.to]||[]).push({from:e.id,n:t.n})));
+const S={era:null,theme:null,q:"",sel:null,lang:"both",notes:[],pastors:window.DEFAULT_PASTORS.slice(),store:"local",editing:null};
+try{S.lang=localStorage.getItem("bt-lang")||"both"}catch(e){}
+
+/* ---------- storage: claude db (private per viewer) or local fallback ---------- */
+let notesCol=null,setDoc=null;
+const LS={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+S.notes=[];
+async function initDb(){
+  const C=window.claude;if(!C||!C.use)return;
+  try{
+    const db=await C.use("db"),user=await C.use("user");if(!db||!user)return;
+    const uid=await user.id();if(!uid)return;
+    notesCol=db.doc("data/users/"+uid+"/notebook").collection("notes");
+    setDoc=db.doc("data/users/"+uid+"/settings");
+    S.store="sync";
+    const t=setTimeout(()=>{S.store="slow";renderAll()},10000);
+    notesCol.onSnapshot(snap=>{clearTimeout(t);S.store="sync";S.notes=snap.docs.map(d=>Object.assign({id:d.id},d.data()));
+      if(!snap.metadata.fromCache)migrateLocal();renderAll()},err=>{clearTimeout(t);S.store="local";renderAll()});
+    setDoc.onSnapshot(s=>{if(s.exists&&Array.isArray(s.data().pastors))S.pastors=s.data().pastors;renderAll()},()=>{});
+  }catch(e){S.store="local"}
+}
+let migrated=false;
+async function migrateLocal(){
+  if(migrated)return;migrated=true;
+  const loc=LS.get("bt-notes",[]);if(!loc.length)return;
+  const have=new Set(S.notes.map(n=>n.id));
+  for(const n of loc){if(have.has(n.id))continue;const {id,...b}=n;try{await notesCol.doc(id).set(b)}catch(e){return}}
+  LS.set("bt-notes",[]);toast("已把本機筆記同步到雲端");
+}
+const nid=()=>"n"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+async function saveNote(n){
+  if(notesCol){const {id,...b}=n;try{await notesCol.doc(id).set(b);return true}catch(e){toast("儲存失敗："+(e.code||"請稍後再試"));return false}}
+  const i=S.notes.findIndex(x=>x.id===n.id);if(i>=0)S.notes[i]=n;else S.notes.push(n);LS.set("bt-notes",S.notes);renderAll();return true;
+}
+async function delNote(id){
+  if(notesCol){try{await notesCol.doc(id).delete()}catch(e){toast("刪除失敗")}return}
+  S.notes=S.notes.filter(n=>n.id!==id);LS.set("bt-notes",S.notes);renderAll();
+}
+async function savePastors(){
+  if(setDoc){try{await setDoc.set({pastors:S.pastors})}catch(e){toast("儲存失敗")}}else{LS.set("bt-pastors",S.pastors);renderAll()}
+}
+const pastor=id=>S.pastors.find(p=>p.id===id)||window.DEFAULT_PASTORS.find(p=>p.id===id)||{id,n:id,en:""};
+
+/* ---------- bible text ---------- */
+const cache={};
+function loadBook(code,l){const k=l+code;if(!cache[k])cache[k]=fetch("bible/"+l+"/"+code+".json").then(r=>{if(!r.ok)throw 0;return r.json()}).catch(e=>{delete cache[k];throw e});return cache[k]}
+function parseRef(r){const m=r.trim().match(/^(\w+) (\d+):(\d+)(?:-(\d+))?$/);return m?{b:m[1],c:+m[2],a:+m[3],z:+(m[4]||m[3])}:null}
+const refLabel=(p,l)=>l==="en"?BOOK[p.b].en+" "+p.c+":"+p.a+(p.z>p.a?"-"+p.z:""):BOOK[p.b].zh+" "+p.c+":"+p.a+(p.z>p.a?"-"+p.z:"");
+const esvUrl=p=>"https://www.esv.org/"+encodeURIComponent(BOOK[p.b].en+" "+p.c+":"+p.a+(p.z>p.a?"-"+p.z:"")).replace(/%20/g,"+")+"/";
+async function versesHtml(ref,l){
+  const p=parseRef(ref);if(!p)return"";
+  let zh=null,en=null;
+  try{[zh,en]=await Promise.all([l!=="en"?loadBook(p.b,"zh"):null,l!=="zh"?loadBook(p.b,"en"):null])}catch(e){return`<p>經文載入失敗，請重新整理。</p>`}
+  let h="";
+  if(zh){h+="<p>";for(let v=p.a;v<=p.z;v++)h+=`<sup>${v}</sup>${esc(zh[p.c-1][v-1]||"")}`;h+="</p>"}
+  if(en){h+='<p class="en">';for(let v=p.a;v<=p.z;v++)h+=`<sup>${v}</sup>${esc(en[p.c-1][v-1]||"")} `;h+="</p>"}
+  return h;
+}
+
+/* ---------- filtering ---------- */
+function match(e){
+  if(S.theme&&!(e.th||[]).includes(S.theme))return false;
+  if(S.q){const q=S.q.toLowerCase();const hay=[e.t,e.en,e.p,e.bg,e.c,e.f,e.d,(e.r||"").split(";").map(r=>{const p=parseRef(r);return p?refLabel(p,"zh")+" "+refLabel(p,"en"):""}).join(" "),(e.v||[]).map(v=>v.s+(v.w||"")).join(" "),S.notes.filter(n=>n.ev===e.id).map(n=>n.text+n.src).join(" ")].join(" ").toLowerCase();if(!hay.includes(q))return false}
+  return true;
+}
+const noteCount=id=>S.notes.filter(n=>n.ev===id).length;
+
+/* ---------- render: band, themes, list ---------- */
+function renderBand(){
+  const cnt=ERAS.map((_,i)=>EV.filter(e=>e.e===i&&match(e)).length);
+  $("#band").innerHTML=ERAS.map((r,i)=>`<button class="era${cnt[i]?"":" dim"}${S.era===i?" cur":""}" style="background:${r.c}" data-era="${i}" aria-label="${esc(r.n)}，${cnt[i]} 個事件"><b>${esc(r.n)}</b><span>${esc(r.d)}</span><i>${cnt[i]} 事件</i></button>`).join("");
+}
+function renderThemes(){
+  $("#themes").innerHTML=`<button class="chip${S.theme?"":" on"}" data-th="">全部事件</button>`+Object.entries(TH).map(([k,t])=>`<button class="chip${S.theme===k?" on":""}" data-th="${k}"><span class="dot" style="background:${t.c}"></span>${esc(t.n)} ${esc(t.en)}</button>`).join("");
+}
+function renderList(){
+  let h="",any=false;
+  ERAS.forEach((r,i)=>{
+    const es=EV.filter(e=>e.e===i&&match(e));if(!es.length)return;any=true;
+    h+=`<div class="ehead" id="era-${i}" style="border-color:${r.c}"><h2 style="color:${r.c}">${esc(r.n)}</h2><span>${esc(r.en)} · ${esc(r.d)} · ${esc(r.b)}</span></div>`;
+    h+=es.map(e=>{const tyc=(e.ty||[]).length+(back[e.id]||[]).length;
+      return`<button class="ev${S.sel===e.id?" sel":""}" style="--ec:${r.c}" data-ev="${e.id}"><div class="dt">${esc(e.d)}</div><div><div class="tt">${esc(e.t)}</div><div class="en">${esc(e.en)}${e.r?" · "+esc(refLabel(parseRef(e.r.split(";")[0]),"zh")):""}</div><div class="meta">${(e.v||[]).length?`<span class="tag">牧者觀點 ${e.v.length}</span>`:""}${tyc?`<span class="tag gold">預表／應驗 ${tyc}</span>`:""}</div></div></button>`}).join("");
+  });
+  if(!any)h=`<p class="empty">沒有符合「${esc(S.q)}」的事件。試試人物名、書卷名或主題。</p>`;
+  if(S.theme)h=`<p class="stat" style="padding-top:12px">主題路徑：<b>${esc(TH[S.theme].n)}</b>，沿著時間順序讀，就是這個主題在整本聖經中的發展。</p>`+h;
+  $("#list").innerHTML=h;
+}
+
+/* ---------- render: panel ---------- */
+let panelToken=0;
+function renderPanel(){
+  const e=byId[S.sel];const P=$("#panel");
+  if(!e){P.innerHTML=`<div style="padding-top:20px"><p class="kick" style="background:${ERAS[0].c}">從這裡開始</p><h2 class="ptitle">點選左邊的任何事件</h2><p>每張事件卡有雙語關鍵經文、背景與前因後果、舊約與新約的預表連線，以及你喜歡的牧者的觀點。</p><p class="stat">共 ${EV.length} 個事件、14 個時代。經文：和合本（神版）與 KJV，皆為公有領域；ESV 有版權，以外部連結開啟。</p></div>`;return}
+  const r=ERAS[e.e],tok=++panelToken;
+  const refs=(e.r||"").split(";").filter(Boolean);
+  const tys=(e.ty||[]).map(t=>({id:t.to,n:t.n,dir:"→"})).concat((back[e.id]||[]).map(t=>({id:t.from,n:t.n,dir:"←"})));
+    const views=e.v||[];
+  P.style.setProperty("--ec",r.c);
+  P.innerHTML=`<div class="sheetbar"><span>${esc(r.n)}</span><button class="btn" id="pPrev" aria-label="上一個事件">上一個</button><button class="btn" id="pNext" aria-label="下一個事件">下一個</button><button class="btn" id="pClose">關閉</button></div>
+  <div style="padding-top:16px"><span class="kick" style="background:${r.c}">${esc(r.n)} · ${esc(r.en)}</span>
+  <h2 class="ptitle">${esc(e.t)}</h2><div class="pen">${esc(e.en)}${e.p?" · "+esc(e.p):""}</div>
+  <p class="dates"><b>${esc(e.d)}</b>${e.alt?`<em>其他說法：${esc(e.alt)}</em>`:""}</p>
+  ${refs.map((x,i)=>{const p=parseRef(x);return`<div class="verse"><div class="ref"><b>${esc(refLabel(p,"zh"))}</b><span>${esc(refLabel(p,"en"))}</span><button class="lnk" data-read="${p.b} ${p.c}" data-hi="${p.a}-${p.z}">讀整章</button><a class="lnk" href="${esvUrl(p)}" target="_blank" rel="noopener">ESV ↗</a></div><div id="vs${i}"><p class="stat">載入經文中…</p></div></div>`}).join("")}
+  ${!refs.length?`<p class="stat">此時期沒有正典記載的經文。</p>`:""}
+  <div class="cfx"><div><h4>背景</h4><p>${esc(e.bg)}</p></div><div><h4>前因</h4><p>${esc(e.c)}</p></div><div><h4>後果與意義</h4><p>${esc(e.f)}</p></div></div>
+  ${(e.l||[]).length?`<div class="sec"><h3>相關事件<small>順著因果鏈讀下去</small></h3><div class="rel">${e.l.map(id=>byId[id]?`<button class="chip" data-ev="${id}"><span class="dot" style="background:${ERAS[byId[id].e].c}"></span>${esc(byId[id].t)}</button>`:"").join("")}</div></div>`:""}
+  ${tys.length?`<div class="sec"><h3>預表與應驗<small>舊約 ↔ 新約</small></h3><div class="ty">${tys.map(t=>byId[t.id]?`<button data-ev="${t.id}"><span class="arr">${t.dir}</span><div><b>${esc(byId[t.id].t)}（${esc(ERAS[byId[t.id].e].n)}）</b><span>${esc(t.n)}</span></div></button>`:"").join("")}</div></div>`:""}
+  <div class="sec"><h3>牧者觀點<small>你喜歡的牧者怎麼解讀這段經文</small></h3>
+  ${views.length?views.map(v=>{const isP=v.k==="p",pp=isP?pastor(v.w):null;return`<div class="view"><div class="who"><b>${esc(isP?pp.n+" "+pp.en:v.w)}</b><span class="kind k-${v.k}">${isP?"牧者・轉述":v.k==="a"?"學術討論":"神學傳統"}</span></div><p>${esc(v.s)}</p>${v.src?`<div class="src">出處：${esc(v.src)}。內容為轉述摘要，非原文引用，請以原書核對。</div>`:""}</div>`}).join(""):`<p class="stat">這個事件還沒有收錄牧者觀點。</p>`}
+  </div>
+  </div>`;
+  refs.forEach((x,i)=>versesHtml(x,S.lang).then(h=>{if(tok===panelToken){const el=$("#vs"+i);if(el)el.innerHTML=h}}));
+}
+function noteForm(ev){
+  const ed=S.editing&&S.notes.find(n=>n.id===S.editing&&n.ev===ev);
+  const n=ed||{p:S.lastPastor||S.pastors[0]?.id||"me",kind:"sum",src:"",text:""};
+  return`<form class="nf" id="nf" data-ev="${ev}"><div class="row">
+  <label>牧者<select class="inp" id="nfP">${S.pastors.map(p=>`<option value="${esc(p.id)}"${p.id===n.p?" selected":""}>${esc(p.n)}</option>`).join("")}<option value="me"${n.p==="me"?" selected":""}>我自己</option></select></label>
+  <label>類型<select class="inp" id="nfK"><option value="sum"${n.kind==="sum"?" selected":""}>摘要</option><option value="quote"${n.kind==="quote"?" selected":""}>原文引述</option><option value="mine"${n.kind==="mine"?" selected":""}>我的反思</option></select></label>
+  <label>出處<input class="inp" id="nfS" value="${esc(n.src)}" placeholder="書名頁碼、講道標題或連結"></label></div>
+  <label>內容<textarea class="inp" id="nfT" required placeholder="這位牧者怎麼解讀這段經文？">${esc(n.text)}</textarea></label>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn on" type="submit">${ed?"儲存修改":"加入筆記"}</button>${ed?`<button class="btn" type="button" id="nfCancel">取消</button>`:""}</div></form>`;
+}
+function renderAll(){renderBand();renderThemes();renderList();renderPanel();if($("#dSet").open)renderSet()}
+
+/* ---------- reader ---------- */
+let RD={b:"GEN",c:1,hi:null};
+async function openRead(b,c,hi){
+  RD={b,c,hi};const d=$("#dRead");if(!d.open)d.showModal();
+  $("#rTitle").textContent=BOOK[b].zh+" "+c+" 章 · "+BOOK[b].en+" "+c;
+  $("#rPrev").disabled=c<=1;$("#rNext").disabled=c>=BOOK[b].n;
+  $("#rBody").innerHTML=`<p class="stat">載入中…</p>`;
+  try{
+    const [zh,en]=await Promise.all([S.lang!=="en"?loadBook(b,"zh"):null,S.lang!=="zh"?loadBook(b,"en"):null]);
+    const n=Math.max(zh?zh[c-1].length:0,en?en[c-1].length:0);
+    const [a,z]=hi?hi.split("-").map(Number):[0,0];let h="";
+    for(let v=1;v<=n;v++)h+=`<div class="rv${v>=a&&v<=z?" hi":""}" id="rv${v}"><div class="n">${v}</div>${zh?`<div class="z">${esc(zh[c-1][v-1]||"")}</div>`:""}${en?`<div class="${zh?"e":"z"}" ${zh?"":"style=\"font-family:Georgia,serif\""}>${esc(en[c-1][v-1]||"")}</div>`:""}</div>`;
+    const evs=EV.filter(e=>e.rd===b+" "+c||(e.r||"").split(";").some(x=>{const p=parseRef(x);return p&&p.b===b&&p.c===c}));
+    if(evs.length)h=`<p class="stat">本章相關事件：${evs.map(e=>`<button class="lnk" data-ev="${e.id}">${esc(e.t)}</button>`).join("、")}</p>`+h;
+    $("#rBody").innerHTML=h;if(a){const el=$("#rv"+a);if(el)el.scrollIntoView({block:"center"})}else $("#dRead").scrollTop=0;
+  }catch(e){$("#rBody").innerHTML=`<p>經文載入失敗，請重新整理。</p>`}
+}
+
+/* ---------- notes overview & settings ---------- */
+function renderNotes(){
+  const f=$("#nFilter"),cur=f.value;
+  f.innerHTML=`<option value="">全部牧者</option>`+S.pastors.map(p=>`<option value="${esc(p.id)}">${esc(p.n)}</option>`).join("")+`<option value="me">我自己</option>`;f.value=cur;
+  const ns=S.notes.filter(n=>!f.value||n.p===f.value).sort((a,b)=>(byId[a.ev]?.y??0)-(byId[b.ev]?.y??0));
+  $("#nBody").innerHTML=ns.length?ns.map(n=>{const e=byId[n.ev],pp=pastor(n.p);return`<div class="note"><div class="h"><button class="lnk" data-ev="${n.ev}">${esc(e?e.t:n.ev)}</button><span class="stat">${esc(e?ERAS[e.e].n:"")}</span><b>${esc(n.p==="me"?"我的反思":pp.n)}</b></div><p>${esc(n.text)}</p>${n.src?`<div class="src">出處：${esc(n.src)}</div>`:""}</div>`}).join(""):`<p class="empty">還沒有筆記。打開任何事件，在最下方「我的牧者筆記」加入第一筆。</p>`;
+}
+function renderSet(){
+  $("#sBody").innerHTML=`<div class="pl">${S.pastors.map(p=>{const c=EV.filter(e=>e.v.some(v=>v.w===p.id)).length;return`<div class="pr"><div><b>${esc(p.n)}</b> ${esc(p.en)}<small>${esc(p.note||"")}</small></div><span class="stat">${c} 個事件</span></div>`}).join("")}</div>
+  <div class="sec"><h3>關於經文與資料</h3><p class="stat">中文：新標點和合本（神版），來源 BibleAquifer（CC0 公有領域）。英文：King James Version（公有領域）。ESV 有版權，以外部連結到 esv.org 閱讀。年代採福音派常用的年代，有爭議的地方另附其他說法。牧者觀點是轉述摘要，請以原書核對。</p></div>`;
+}
+let pEdit=null;
+
+/* ---------- events ---------- */
+function select(id,push=true){
+  if(!byId[id])return;S.sel=id;S.editing=null;renderList();renderPanel();
+  const P=$("#panel");P.classList.add("open");P.scrollTop=0;
+  if(push&&location.hash!=="#"+id)history.replaceState(null,"","#"+id);
+  if(push){const b=document.querySelector(`.ev[data-ev="${id}"]`);if(b&&window.innerWidth>900)b.scrollIntoView({block:"nearest"})}
+}
+function step(d){const vis=EV.filter(match);const i=vis.findIndex(e=>e.id===S.sel);const n=vis[i+d];if(n)select(n.id)}
+document.addEventListener("click",async ev=>{
+  const t=ev.target.closest("button,a");if(!t)return;
+  if(t.dataset.ev){document.querySelectorAll("dialog[open]").forEach(d=>d.close());select(t.dataset.ev);return}
+  if(t.dataset.era!==undefined){const i=+t.dataset.era;S.era=i;renderBand();const el=$("#era-"+i);if(el)el.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"});else toast("此時代沒有符合篩選的事件");return}
+  if(t.dataset.th!==undefined){S.theme=t.dataset.th||null;renderAll();return}
+  if(t.dataset.l){S.lang=t.dataset.l;LS.set("bt-lang",S.lang);try{localStorage.setItem("bt-lang",S.lang)}catch(e){}document.querySelectorAll("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l===S.lang));renderPanel();if($("#dRead").open)openRead(RD.b,RD.c,RD.hi);return}
+  if(t.dataset.read){const [b,c]=t.dataset.read.split(" ");openRead(b,+c,t.dataset.hi);return}
+  if(t.dataset.close!==undefined){t.closest("dialog").close();return}
+  if(t.dataset.edit){S.editing=t.dataset.edit;renderPanel();const f=$("#nfT");if(f){f.focus();f.scrollIntoView({block:"center"})}return}
+  if(t.dataset.del){const btn=t;if(btn.dataset.armed){await delNote(btn.dataset.del)}else{btn.dataset.armed=1;btn.textContent="再按一次確認刪除";setTimeout(()=>{if(btn.isConnected){delete btn.dataset.armed;btn.textContent="刪除"}},3000)}return}
+  if(t.dataset.pe!==undefined){pEdit=+t.dataset.pe;const p=S.pastors[pEdit];$("#pfN").value=p.n;$("#pfE").value=p.en||"";$("#pfB").value=p.note||"";$("#pfGo").textContent="儲存修改";$("#pfN").focus();return}
+  if(t.dataset.pd!==undefined){const i=+t.dataset.pd;if(t.dataset.armed){S.pastors.splice(i,1);await savePastors();renderSet()}else{t.dataset.armed=1;t.textContent="再按一次確認"}return}
+  switch(t.id){
+    case"pClose":$("#panel").classList.remove("open");break;
+    case"pPrev":step(-1);break;case"pNext":step(1);break;
+    case"rPrev":openRead(RD.b,RD.c-1);break;case"rNext":openRead(RD.b,RD.c+1);break;
+    case"bNotes":$("#dNotes").showModal();renderNotes();break;
+    case"bSet":pEdit=null;$("#dSet").showModal();renderSet();break;
+    case"nfCancel":S.editing=null;renderPanel();break;
+    case"exp":{const data=JSON.stringify({app:"bible-timeline",v:1,pastors:S.pastors,notes:S.notes},null,1);$("#impT").value=data;try{await navigator.clipboard.writeText(data);toast("已複製，可貼到 Google Drive 或備忘錄保存")}catch(e){$("#impT").select();toast("已放進下方文字框，請手動複製")}break}
+    case"imp":{let d;try{d=JSON.parse($("#impT").value)}catch(e){toast("JSON 格式不正確");break}
+      if(Array.isArray(d.pastors)){const ids=new Set(S.pastors.map(p=>p.id));d.pastors.forEach(p=>{if(p&&p.id&&!ids.has(p.id))S.pastors.push(p)});await savePastors()}
+      let c=0;const have=new Set(S.notes.map(n=>n.id));for(const n of d.notes||[]){if(n&&n.id&&n.ev&&n.text&&!have.has(n.id)){if(await saveNote(n))c++}}
+      toast("匯入 "+c+" 筆筆記");renderSet();break}
+  }
+});
+document.addEventListener("submit",async ev=>{
+  ev.preventDefault();const f=ev.target;
+  if(f.id==="nf"){
+    const text=$("#nfT").value.trim();if(!text){$("#nfT").focus();return}
+    const old=S.editing&&S.notes.find(n=>n.id===S.editing);
+    const n={id:old?old.id:nid(),ev:f.dataset.ev,p:$("#nfP").value,kind:$("#nfK").value,src:$("#nfS").value.trim(),text,ts:old?old.ts:Date.now(),up:Date.now()};
+    S.lastPastor=n.p;const btn=f.querySelector("[type=submit]");btn.disabled=true;
+    if(await saveNote(n)){S.editing=null;toast(old?"已更新":"已加入筆記");document.activeElement.blur();renderAll()}else btn.disabled=false;
+  }
+  if(f.id==="pf"){
+    const n=$("#pfN").value.trim();if(!n)return;const p={n,en:$("#pfE").value.trim(),note:$("#pfB").value.trim()};
+    if(pEdit!==null){Object.assign(S.pastors[pEdit],p);pEdit=null}else S.pastors.push(Object.assign({id:"p"+Date.now().toString(36)},p));
+    await savePastors();renderSet();toast("已儲存牧者名單");
+  }
+});
+let qt;$("#q").addEventListener("input",e=>{clearTimeout(qt);qt=setTimeout(()=>{S.q=e.target.value.trim();renderBand();renderList()},150)});
+document.addEventListener("keydown",e=>{if(e.target.matches("input,textarea,select"))return;if(e.key==="ArrowDown"||e.key==="j"){if(S.sel){e.preventDefault();step(1)}}if(e.key==="ArrowUp"||e.key==="k"){if(S.sel){e.preventDefault();step(-1)}}});
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2600)}
+function fromHash(){const h=location.hash.slice(1);if(byId[h])select(h,false)}
+window.addEventListener("hashchange",fromHash);
+
+document.querySelectorAll("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l===S.lang));
+renderAll();
+if(byId[location.hash.slice(1)])fromHash();else if(window.innerWidth>900){S.sel="creation";renderList();renderPanel()}
+}
+</script>
+</body>
+</html>
