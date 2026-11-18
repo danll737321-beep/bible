@@ -182,8 +182,6 @@ main{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:600px){
 h1 small .long{display:none}
-.tools{display:grid;grid-template-columns:auto auto 1fr;gap:8px}
-.tools #q{grid-column:1/-1;width:100%}
 .ehead{flex-wrap:wrap;gap:2px 10px;padding-top:14px}
 .ehead span{font-size:13px;flex-basis:100%}
 dialog{overflow:hidden;width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;margin:0;border-radius:0;display:none;flex-direction:column}
@@ -192,32 +190,97 @@ dialog[open]{display:flex}
 .dh{padding-top:max(14px,env(safe-area-inset-top))}
 .dh #rPrev,.dh #rNext{display:none}
 .rfoot{display:flex}
-.cfx{grid-template-columns:minmax(0,1fr)}form.nf .row{grid-template-columns:minmax(0,1fr)}.ev{grid-template-columns:72px minmax(0,1fr)}.era{flex-basis:84px;min-height:84px}.era i{display:none}#q{width:100%}.tools{width:100%;margin-left:0}}
+.cfx{grid-template-columns:minmax(0,1fr)}form.nf .row{grid-template-columns:minmax(0,1fr)}}
+
+/* ===== layout v2：左側時間軸 ===== */
+header{padding:max(12px,env(safe-area-inset-top)) max(3vw,16px) 10px;border-bottom:1px solid var(--line)}
+h1{font-size:clamp(24px,3vw,32px)}
+h1 small{font-size:13px;margin-top:2px}
+#thSel{max-width:220px;padding-right:8px}
+main{grid-template-columns:232px minmax(0,1fr) minmax(0,1.3fr);border-top:0}
+#rail{position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;scrollbar-width:thin;border-right:1px solid var(--line);padding:12px 10px 40px 12px;background:var(--bg)}
+.rhd{width:100%;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-weight:700;font-size:14px;margin-bottom:10px}
+.rp{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 8px 6px 12px;border-left:5px solid var(--pc);border-radius:0 8px 8px 0;margin-top:10px}
+.rp b{font:700 15.5px/1.2 "Noto Serif TC",serif;color:var(--pc)}
+.rp b small{font:500 12px "Noto Sans TC";color:var(--mute);margin-left:6px}
+.rp span{display:block;font-size:12px;color:var(--mute);margin-top:2px}
+.rp.gap{--pc:var(--mute);border-left-style:dotted;background:repeating-linear-gradient(135deg,transparent 0 7px,color-mix(in srgb,var(--line) 70%,transparent) 7px 9px)}
+.rp.cur{background:color-mix(in srgb,var(--pc) 10%,transparent)}
+.rp.gap.cur{background:var(--panel)}
+.rg{margin-left:14px;border-left:2px solid var(--line);padding:2px 0}
+.re{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;text-align:left;border:0;background:none;padding:6px 6px 6px 0;margin-left:-8px;border-radius:8px;min-height:40px}
+.re i{width:14px;height:14px;border-radius:50%;background:var(--ec);border:3px solid var(--bg);box-sizing:content-box;margin-left:-3px}
+.re b{font-size:14px;font-weight:500;line-height:1.25;display:block}
+.re small{display:block;font-size:11.5px;color:var(--mute)}
+.re em{font-style:normal;font-size:12px;color:var(--mute)}
+.re:hover{background:var(--panel)}
+.re.on{background:var(--panel)}
+.re.on b{font-weight:700}
+.re.dim{opacity:.4}
+.re.out,.rp.out{opacity:.35}
+#list{padding:4px max(2vw,16px) 80px max(2vw,18px)}
+.setg{display:grid;gap:10px;margin-bottom:18px}
+.setr{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.setr span{font-weight:500}
+.seth{font:700 17px "Noto Serif TC",serif;margin:8px 0 10px}
+@media(max-width:1180px) and (min-width:901px){main{grid-template-columns:200px minmax(0,1fr) minmax(0,1.15fr)}}
+@media(max-width:900px){
+main{grid-template-columns:58px minmax(0,1fr)}
+#rail{padding:6px 4px 60px;border-right:1px solid var(--line)}
+.rhd{height:34px;font-size:11px;padding:0;margin-bottom:4px}
+.rp{padding:4px 0 2px;border-left:0;border-top:3px solid var(--pc);border-radius:0;margin-top:8px;text-align:center}
+.rp b{font-size:11.5px;display:block;line-height:1.2}
+.rp b small,.rp span{display:none}
+.rp.gap{border-top-style:dotted}
+.rg{margin:2px 0 0;border:0;padding:0;display:grid;gap:3px}
+.re{display:flex;flex-direction:column;justify-content:center;gap:0;margin:0;padding:4px 2px;min-height:46px;border-radius:7px;background:var(--ec);color:#fff;text-align:center}
+.re i,.re small,.re em{display:none}
+.re b{font-size:13px;font-weight:700;letter-spacing:.05em}
+.re b .full{display:none}
+.re.on{background:var(--ec);outline:3px solid var(--ink);outline-offset:-3px}
+.re:hover{background:var(--ec)}
+#list{padding:0 12px 90px 12px}
+.ehead{margin:0 -12px;padding:12px 12px 8px}
+.ehead h2{font-size:19px}
+.ev{grid-template-columns:minmax(0,1fr);gap:2px;padding:12px 4px}
+.ev .dt{font-size:12.5px;padding:0;order:0}
+.ev .tt{font-size:17.5px}
+.ev .en{font-size:13.5px}
+#panel .cfx p,#panel .view p,#panel .sec>p{font-size:calc(16.5px*var(--fz));line-height:1.75}
+.verse{padding:14px 14px;margin-left:-4px;margin-right:-4px}
+.tools{display:grid;grid-template-columns:minmax(0,1fr) auto;width:100%;margin-left:0}
+.tools #q{grid-column:1/-1}
+#thSel{max-width:none;width:100%}
+header{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+}
+@media(min-width:901px){.re b .short{display:none}}
+.ehead{flex-wrap:wrap;row-gap:2px}.ehead h2{white-space:nowrap}
+.rhd .s{display:none}
+@media(max-width:900px){#q{width:100%}.rhd .l{display:none}.rhd .s{display:inline}}
 @media(prefers-reduced-motion:reduce){#panel{transition:none}}
 </style>
 </head>
 <body>
 <header>
-  <h1>聖經時間軸<small>Bible Timeline · 以大衛・鮑森為主軸<span class="long">：《新舊約縱覽全集》、前因後果、預表與應驗、牧者觀點</span></small></h1>
+  <h1>聖經時間軸<small>以大衛・鮑森《新舊約縱覽》為主軸</small></h1>
   <div class="tools">
     <input id="q" class="inp" type="search" placeholder="搜尋事件、人物、經文" aria-label="搜尋">
-    <div class="seg" id="lang" role="group" aria-label="經文語言">
-      <button data-l="zh">中</button><button data-l="both" class="on">雙語</button><button data-l="en">EN</button>
-    </div>
-    <button class="btn" id="bFz" aria-label="字級">字級 中</button>
-    <button class="btn" id="bSet">牧者名單</button>
+    <select id="thSel" class="inp" aria-label="神學主題路徑"></select>
+    <button class="btn" id="bSet" aria-label="設定">設定</button>
   </div>
 </header>
-<nav class="pfband" id="pfband" aria-label="鮑森時間框架"></nav>
-<nav class="band" id="band" aria-label="時代"></nav>
-<div class="themes" id="themes" aria-label="神學主題路徑"></div>
 <main>
+  <aside id="rail" aria-label="時間軸"></aside>
   <section id="list" aria-label="事件列表"></section>
   <article id="panel" aria-live="polite"></article>
 </main>
 
 <dialog id="dRead" aria-label="讀經"><div class="dh"><h3 id="rTitle"></h3><button class="btn" id="rPrev">上一章</button><button class="btn" id="rNext">下一章</button><button class="btn" data-close>關閉</button></div><div class="db" id="rBody"></div><div class="rfoot"><button class="btn" data-rp="-1">上一章</button><button class="btn" data-rp="1">下一章</button></div></dialog>
-<dialog id="dSet"><div class="dh"><h3>牧者名單與資料來源</h3><button class="btn" data-close>關閉</button></div><div class="db" id="sBody"></div></dialog>
+<dialog id="dSet"><div class="dh"><h3>設定</h3><button class="btn" data-close>關閉</button></div><div class="db"><div class="setg">
+<div class="setr"><span>經文語言</span><div class="seg" id="lang" role="group" aria-label="經文語言"><button data-l="zh">中</button><button data-l="both" class="on">雙語</button><button data-l="en">EN</button></div></div>
+<div class="setr"><span>字級</span><button class="btn" id="bFz" aria-label="字級">字級 中</button></div>
+<div class="setr"><span>鮑森框架</span><button class="btn" id="bPF3">看全貌圖</button></div>
+</div><h3 class="seth">牧者名單與資料來源</h3><div id="sBody"></div></div></dialog>
 <dialog id="dPF" aria-label="鮑森框架全貌"><div class="dh"><h3>鮑森框架：舊約兩千年全貌</h3><button class="btn" data-close>關閉</button></div><div class="db" id="pfBody"></div></dialog>
 <div class="toast" id="toast"></div>
 
@@ -309,12 +372,14 @@ function match(e){
 const noteCount=id=>S.notes.filter(n=>n.ev===id).length;
 
 /* ---------- render: band, themes, list ---------- */
+const ESHORT=["創造","族長","出埃","征服","士師","聯合","分裂","被擄","歸回","兩約","降生","傳道","受難","教會"];
 function renderBand(){
-  const cnt=ERAS.map((_,i)=>EV.filter(e=>e.e===i&&match(e)).length);
-  $("#band").innerHTML=ERAS.map((r,i)=>`<button class="era${cnt[i]?"":" dim"}${S.era===i?" cur":""}${S.pf!=null&&!PF[S.pf].eras.includes(i)?" out":""}" style="background:${r.c}" data-era="${i}" aria-label="${esc(r.n)}，${cnt[i]} 個事件"><b>${esc(r.n)}</b><span>${esc(r.d)}</span><i>${cnt[i]} 事件</i></button>`).join("");
+  const cnt=ERAS.map((_,i)=>EV.filter(e=>e.e===i&&match(e)).length),PFn=window.PF_PERIODS||[];
+  const era=i=>`<button class="re${cnt[i]?"":" dim"}${S.era===i?" on":""}${S.pf!=null&&!PFn[S.pf].eras.includes(i)?" out":""}" style="--ec:${ERAS[i].c}" data-era="${i}" aria-label="${esc(ERAS[i].n)}，${cnt[i]} 個事件"><i></i><span><b><span class="full">${esc(ERAS[i].n)}</span><span class="short">${ESHORT[i]||""}</span></b><small>${esc(ERAS[i].d)}</small></span><em>${cnt[i]}</em></button>`;
+  $("#rail").innerHTML=`<button class="rhd" id="bPF" aria-label="鮑森框架全貌圖"><span class="l">鮑森框架 全貌圖 ›</span><span class="s">全貌</span></button>`+PFn.map((p,j)=>`<button class="rp${p.k==="g"?" gap":""}${S.pf===j?" cur":""}${S.pf!=null&&S.pf!==j?" out":""}" style="--pc:${p.c||"var(--mute)"}" data-pf="${j}"><b>${esc(p.k==="g"?"沉默":p.n)}<small>${esc(p.sub)}</small></b><span>${p.k==="g"?esc(p.n):esc(p.who)+(p.lead!=="—"?"・"+esc(p.lead):"")}</span></button>${p.eras.length?`<div class="rg">${p.eras.map(era).join("")}</div>`:""}`).join("");
 }
 function renderThemes(){
-  $("#themes").innerHTML=`<button class="chip${S.theme?"":" on"}" data-th="">全部事件</button>`+Object.entries(TH).map(([k,t])=>`<button class="chip${S.theme===k?" on":""}" data-th="${k}"><span class="dot" style="background:${t.c}"></span>${esc(t.n)} ${esc(t.en)}</button>`).join("");
+  $("#thSel").innerHTML=`<option value="">全部事件</option>`+Object.entries(TH).map(([k,t])=>`<option value="${k}"${S.theme===k?" selected":""}>主題：${esc(t.n)}</option>`).join("");
 }
 function renderList(){
   let h="",any=false;
@@ -336,7 +401,7 @@ let panelToken=0;
 function renderPanel(){
   const e=byId[S.sel];const P=$("#panel");
   if(!e&&S.pf!=null){renderPF();return}
-  if(!e){P.innerHTML=`<div style="padding-top:20px"><p class="kick" style="background:${ERAS[0].c}">從這裡開始</p><h2 class="ptitle">點選左邊的任何事件</h2><p>每張事件卡有雙語關鍵經文、背景與前因後果、舊約與新約的預表連線，以及以大衛・鮑森為主軸的牧者觀點。最上方一列是鮑森《新舊約縱覽》的框架：四段五百年加兩段四百年沉默，點選可看該時期的人物、帶領者和書卷；每個時代開頭有鮑森導讀，上方「鮑森重點」可以只看他強調的事件。</p><p class="stat">共 ${EV.length} 個事件、14 個時代。經文：和合本（神版）與 KJV，皆為公有領域；ESV 有版權，以外部連結開啟。</p></div>`;return}
+  if(!e){P.innerHTML=`<div style="padding-top:20px"><p class="kick" style="background:${ERAS[0].c}">從這裡開始</p><h2 class="ptitle">點選左邊的任何事件</h2><p>每張事件卡有雙語關鍵經文、背景與前因後果、舊約與新約的預表連線，以及以大衛・鮑森為主軸的牧者觀點。左側時間軸是鮑森《新舊約縱覽》的框架：四段五百年加兩段四百年沉默，點選可看該時期的人物、帶領者和書卷；每個時代開頭有鮑森導讀，上方「鮑森重點」可以只看他強調的事件。</p><p class="stat">共 ${EV.length} 個事件、14 個時代。經文：和合本（神版）與 KJV，皆為公有領域；ESV 有版權，以外部連結開啟。</p></div>`;return}
   const r=ERAS[e.e],tok=++panelToken;
   const refs=(e.r||"").split(";").filter(Boolean);
   const tys=(e.ty||[]).map(t=>({id:t.to,n:t.n,dir:"→"})).concat((back[e.id]||[]).map(t=>({id:t.from,n:t.n,dir:"←"})));
@@ -367,7 +432,7 @@ function noteForm(ev){
   <label>內容<textarea class="inp" id="nfT" required placeholder="這位牧者怎麼解讀這段經文？">${esc(n.text)}</textarea></label>
   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn on" type="submit">${ed?"儲存修改":"加入筆記"}</button>${ed?`<button class="btn" type="button" id="nfCancel">取消</button>`:""}</div></form>`;
 }
-function renderAll(){renderPFBand();renderBand();renderThemes();renderList();renderPanel();if($("#dSet").open)renderSet()}
+function renderAll(){renderBand();renderThemes();renderList();renderPanel();if($("#dSet").open)renderSet()}
 
 /* ---------- reader ---------- */
 let RD={b:"GEN",c:1,hi:null};
@@ -406,11 +471,7 @@ const PF=window.PF_PERIODS||[],PFE=window.PF_ERA_PERIOD||[];
 S.pf=null;S.canon="heb";
 const bk=c=>BOOK[c]||{zh:c,en:c};
 function pfCount(i){return EV.filter(e=>PFE[e.e]===i&&match(e)).length}
-function renderPFBand(){
-  $("#pfband").innerHTML=`<button class="pf hd${$("#dPF").open?" cur":""}" id="bPF" aria-label="鮑森框架全貌"><b>鮑森框架</b><span>全貌圖 ›</span></button>`+PF.map((p,i)=>p.k==="g"
-    ?`<button class="pf gap${S.pf===i?" cur":""}" data-pf="${i}" aria-label="${esc(p.n)}，${esc(p.sub)}"><b>${esc(p.n)}</b><span>${esc(p.sub)}</span></button>`
-    :`<button class="pf${S.pf===i?" cur":""}" style="background:${p.c}" data-pf="${i}" aria-label="${esc(p.n)}，${pfCount(i)} 個事件"><b>${esc(p.n)} <small style="font-weight:500">${esc(p.sub)}</small></b><span>${esc(p.who)}${p.lead!=="—"?"・"+esc(p.lead):""}</span></button>`).join("");
-}
+function renderPFBand(){renderBand()}
 function renderPF(){
   const p=PF[S.pf],P=$("#panel");
   const eras=p.eras.map(i=>`<button class="chip" data-era="${i}"><span class="dot" style="background:${ERAS[i].c}"></span>${esc(ERAS[i].n)}</button>`).join("");
@@ -481,6 +542,7 @@ document.addEventListener("click",async ev=>{
   switch(t.id){
     case"pClose":closeSheet();break;
     case"bPF":case"bPF2":openPF();break;
+    case"bPF3":$("#dSet").close();openPF();break;
     case"bFz":setFz((S.fz+1)%3);break;
     case"pPrev":step(-1);break;case"pNext":step(1);break;
     case"rPrev":openRead(RD.b,RD.c-1);break;case"rNext":openRead(RD.b,RD.c+1);break;
@@ -525,6 +587,11 @@ if("serviceWorker" in navigator&&location.protocol==="https:"&&/github\.io$/.tes
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2600)}
 function fromHash(){const h=location.hash.slice(1);if(byId[h])select(h,false)}
 window.addEventListener("hashchange",fromHash);
+$("#thSel").addEventListener("change",e=>{S.theme=e.target.value||null;renderAll();window.scrollTo({top:0})});
+/* 捲動時，左側時間軸標出目前所在的時代 */
+let spyT;function spy(){clearTimeout(spyT);spyT=setTimeout(()=>{const hs=[...document.querySelectorAll(".ehead")];let cur=null;for(const h of hs){if(h.getBoundingClientRect().top<=window.innerHeight*0.35)cur=+h.id.slice(4);else break}
+  if(cur==null&&hs[0])cur=+hs[0].id.slice(4);if(cur===S.era)return;S.era=cur;document.querySelectorAll(".re").forEach(b=>b.classList.toggle("on",+b.dataset.era===cur));const b=document.querySelector(`.re[data-era="${cur}"]`),R=$("#rail");if(b&&R){const br=b.getBoundingClientRect(),rr=R.getBoundingClientRect();if(br.top<rr.top+40||br.bottom>rr.bottom-40)R.scrollTop+=br.top-rr.top-rr.height/3}},60)}
+window.addEventListener("scroll",spy,{passive:true});
 $("#dPF").addEventListener("close",renderPFBand);
 
 document.querySelectorAll("#lang button").forEach(b=>b.classList.toggle("on",b.dataset.l===S.lang));
