@@ -351,6 +351,7 @@ const lecLinks=ks=>ks.map(k=>ZLL[k]?`<a class="lnk" href="${ZLL[k].u}" target="_
 const PE=window.PAWSON_ERAS||[];
 const byId={};EV.forEach(e=>byId[e.id]=e);
 (window.ZL_TY||[]).forEach(t=>{const f=EV.find(e=>e.id===t.from);if(f)(f.ty=f.ty||[]).push({to:t.to,n:t.n})});
+Object.entries(window.KELLER_VIEWS||{}).forEach(([id,k])=>{const e=EV.find(x=>x.id===id);if(e&&!e.v.some(v=>v.w==="keller"))e.v.push({k:"p",w:"keller",s:k.s,src:k.src})});
 EV.forEach(e=>{e.P=e.v.find(v=>v.w==="pawson");e.K=e.v.find(v=>v.w==="keller");e.O=e.v.filter(v=>v.w!=="pawson"&&v.w!=="keller");if(e.K)(e.th=e.th||[]).push("keller")});
 const back={};EV.forEach(e=>(e.ty||[]).forEach(t=>(back[t.to]=back[t.to]||[]).push({from:e.id,n:t.n})));
 const S={era:null,theme:null,q:"",sel:null,lang:"both",notes:[],pastors:window.DEFAULT_PASTORS.slice(),store:"local",editing:null};
