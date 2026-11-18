@@ -1,6 +1,6 @@
 // 離線快取：程式與資料走「先網路、失敗用快取」，經文 JSON 走「先快取」（讀過的章節離線可讀）
-const V="bt-v1";
-const CORE=["./","index.html","manifest.json","icon-180.png","data/books.js","data/eras.js","data/events-ot.js","data/events-nt.js","data/pawson.js"];
+const V="bt-v2";
+const CORE=["./","index.html","manifest.json","icon-180.png","data/books.js","data/eras.js","data/events-ot.js","data/events-nt.js","data/pawson.js","data/pawson-framework.js"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{
