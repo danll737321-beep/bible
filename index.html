@@ -201,7 +201,7 @@ main{grid-template-columns:232px minmax(0,1fr) minmax(0,1.3fr);border-top:0}
 #rail{position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;scrollbar-width:thin;border-right:1px solid var(--line);padding:12px 10px 40px 12px;background:var(--bg)}
 .rhd{width:100%;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-weight:700;font-size:14px;margin-bottom:10px}
 .rp{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 8px 6px 12px;border-left:5px solid var(--pc);border-radius:0 8px 8px 0;margin-top:10px}
-.rp b{font:700 15.5px/1.2 "Noto Serif TC",serif;color:var(--pc)}
+.rp b{font:700 15.5px/1.2 "Noto Serif TC",serif;color:var(--pc);overflow-wrap:anywhere}
 .rp b small{font:500 12px "Noto Sans TC";color:var(--mute);margin-left:6px}
 .rp span{display:block;font-size:12px;color:var(--mute);margin-top:2px}
 .rp.gap{--pc:var(--mute);border-left-style:dotted;background:repeating-linear-gradient(135deg,transparent 0 7px,color-mix(in srgb,var(--line) 70%,transparent) 7px 9px)}
@@ -229,7 +229,8 @@ main{grid-template-columns:58px minmax(0,1fr)}
 #rail{padding:6px 4px 60px;border-right:1px solid var(--line)}
 .rhd{height:34px;font-size:11px;padding:0;margin-bottom:4px}
 .rp{padding:4px 0 2px;border-left:0;border-top:3px solid var(--pc);border-radius:0;margin-top:8px;text-align:center}
-.rp b{font-size:11.5px;display:block;line-height:1.2}
+.rp b{font-size:11.5px;display:block;line-height:1.2;hyphens:auto}
+html[lang=en] .rp b{font-size:10.5px}
 .rp b small,.rp span{display:none}
 .rp.gap{border-top-style:dotted}
 .rg{margin:2px 0 0;border:0;padding:0;display:grid;gap:3px}
@@ -248,7 +249,7 @@ main{grid-template-columns:58px minmax(0,1fr)}
 .ev .en{font-size:13.5px}
 #panel .cfx p,#panel .view p,#panel .sec>p{font-size:calc(16.5px*var(--fz));line-height:1.75}
 .verse{padding:14px 14px;margin-left:-4px;margin-right:-4px}
-.tools{display:grid;grid-template-columns:minmax(0,1fr) auto auto;width:100%;margin-left:0}
+.tools{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;width:100%;margin-left:0}
 .tools #q{grid-column:1/-1}
 #thSel{max-width:none;width:100%}
 header{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
@@ -303,6 +304,7 @@ ul.tb{margin:0 0 8px;padding-left:18px}ul.tb li{margin:3px 0;font-size:14.5px}
   <div class="tools">
     <input id="q" class="inp" type="search" placeholder="搜尋事件、人物、經文" aria-label="搜尋">
     <select id="thSel" class="inp" aria-label="神學主題路徑"></select>
+    <button class="btn" id="bUI" aria-label="Language">EN</button>
     <button class="btn" id="bIss">議題</button>
     <button class="btn" id="bSet" aria-label="設定">設定</button>
   </div>
@@ -332,9 +334,16 @@ ul.tb{margin:0 0 8px;padding-left:18px}ul.tb li{margin:3px 0;font-size:14.5px}
 <script src="data/pawson-framework.js"></script>
 <script src="data/keller.js"></script>
 <script src="data/issues.js"></script>
+<script src="data/en/ev-ot1.js"></script>
+<script src="data/en/ev-ot2.js"></script>
+<script src="data/en/ev-nt.js"></script>
+<script src="data/en/pawson.js"></script>
+<script src="data/en/rest.js"></script>
+<script src="data/en/apply.js"></script>
 <script>
 {
 const $=s=>document.querySelector(s);
+const EN=!!window.UI_EN,L=(z,e)=>EN?e:z;
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ERAS=window.ERAS,EV=window.EVENTS,TH=window.THEMES,BOOK={};
 window.BOOKS.forEach((b,i)=>BOOK[b[0]]={zh:b[1],en:b[2],n:b[3],i});
@@ -346,7 +355,7 @@ ERAS.forEach(r=>r.c=mute(r.c));(window.PF_PERIODS||[]).forEach(p=>{if(p.c)p.c=mu
 const KA=window.KELLER_ACTS||[],KAE=window.KELLER_ACT_ERA||[],KAV=window.KELLER_ACT_EV||{},KE=window.KELLER_ERA||{},ISS=window.ISSUES||[];
 const actOf=e=>KA.find(a=>a.id===(KAV[e.id]||KAE[e.e]));
 const issOf={};ISS.forEach(x=>x.ev.forEach(id=>(issOf[id]=issOf[id]||[]).push(x)));
-TH.keller={n:"凱勒重點",en:"Keller",c:"#a32d2d"};
+TH.keller={n:L("凱勒重點","Keller"),en:"Keller",c:"#a32d2d"};
 const lecLinks=ks=>ks.map(k=>ZLL[k]?`<a class="lnk" href="${ZLL[k].u}" target="_blank" rel="noopener">${esc(ZLL[k].n)} ↗</a>`:"").join("　");
 const PE=window.PAWSON_ERAS||[];
 const byId={};EV.forEach(e=>byId[e.id]=e);
@@ -356,6 +365,7 @@ EV.forEach(e=>{e.P=e.v.find(v=>v.w==="pawson");e.K=e.v.find(v=>v.w==="keller");e
 const back={};EV.forEach(e=>(e.ty||[]).forEach(t=>(back[t.to]=back[t.to]||[]).push({from:e.id,n:t.n})));
 const S={era:null,theme:null,q:"",sel:null,lang:"both",notes:[],pastors:window.DEFAULT_PASTORS.slice(),store:"local",editing:null};
 try{S.lang=localStorage.getItem("bt-lang")||"both"}catch(e){}
+if(EN)S.lang="en";
 
 /* ---------- storage: claude db (private per viewer) or local fallback ---------- */
 let notesCol=null,setDoc=null;
@@ -406,7 +416,7 @@ const esvUrl=p=>"https://www.esv.org/"+encodeURIComponent(BOOK[p.b].en+" "+p.c+"
 async function versesHtml(ref,l){
   const p=parseRef(ref);if(!p)return"";
   let zh=null,en=null;
-  try{[zh,en]=await Promise.all([l!=="en"?loadBook(p.b,"zh"):null,l!=="zh"?loadBook(p.b,"en"):null])}catch(e){return`<p>經文載入失敗，請重新整理。</p>`}
+  try{[zh,en]=await Promise.all([l!=="en"?loadBook(p.b,"zh"):null,l!=="zh"?loadBook(p.b,"en"):null])}catch(e){return`<p>${L("經文載入失敗，請重新整理。","Could not load the text. Please refresh.")}</p>`}
   let h="";
   if(zh){h+="<p>";for(let v=p.a;v<=p.z;v++)h+=`<sup>${v}</sup>${esc(zh[p.c-1][v-1]||"")}`;h+="</p>"}
   if(en){h+='<p class="en">';for(let v=p.a;v<=p.z;v++)h+=`<sup>${v}</sup>${esc(en[p.c-1][v-1]||"")} `;h+="</p>"}
@@ -422,32 +432,32 @@ function match(e){
 const noteCount=id=>S.notes.filter(n=>n.ev===id).length;
 
 /* ---------- render: band, themes, list ---------- */
-const ESHORT=["創造","族長","出埃","征服","士師","聯合","分裂","被擄","歸回","兩約","降生","傳道","受難","教會"];
+const ESHORT=EN?["Orig","Patr","Exod","Conq","Judg","King","Split","Exile","Return","Inter","Birth","Min","Cross","Church"]:["創造","族長","出埃","征服","士師","聯合","分裂","被擄","歸回","兩約","降生","傳道","受難","教會"];
 function renderBand(){
   const cnt=ERAS.map((_,i)=>EV.filter(e=>e.e===i&&match(e)).length),PFn=window.PF_PERIODS||[];
-  const era=i=>`<button class="re${cnt[i]?"":" dim"}${S.era===i?" on":""}${S.pf!=null&&!PFn[S.pf].eras.includes(i)?" out":""}" style="--ec:${ERAS[i].c}" data-era="${i}" aria-label="${esc(ERAS[i].n)}，${cnt[i]} 個事件"><i></i><span><b><span class="full">${esc(ERAS[i].n)}</span><span class="short">${ESHORT[i]||""}</span></b><small>${esc(ERAS[i].d)}</small></span><em>${cnt[i]}</em></button>`;
-  $("#rail").innerHTML=`<button class="rhd" id="bPF" aria-label="鮑森框架全貌圖"><span class="l">鮑森框架 全貌圖 ›</span><span class="s">全貌</span></button>`+PFn.map((p,j)=>`<button class="rp${p.k==="g"?" gap":""}${S.pf===j?" cur":""}${S.pf!=null&&S.pf!==j?" out":""}" style="--pc:${p.c||"var(--mute)"}" data-pf="${j}"><b>${esc(p.k==="g"?"沉默":p.n)}<small>${esc(p.sub)}</small></b><span>${p.k==="g"?esc(p.n):esc(p.who)+(p.lead!=="—"?"・"+esc(p.lead):"")}</span></button>${p.eras.length?`<div class="rg">${p.eras.map(era).join("")}</div>`:""}`).join("");
+  const era=i=>`<button class="re${cnt[i]?"":" dim"}${S.era===i?" on":""}${S.pf!=null&&!PFn[S.pf].eras.includes(i)?" out":""}" style="--ec:${ERAS[i].c}" data-era="${i}" aria-label="${esc(ERAS[i].n)}${L("，"+cnt[i]+" 個事件",", "+cnt[i]+" events")}"><i></i><span><b><span class="full">${esc(ERAS[i].n)}</span><span class="short">${ESHORT[i]||""}</span></b><small>${esc(ERAS[i].d)}</small></span><em>${cnt[i]}</em></button>`;
+  $("#rail").innerHTML=`<button class="rhd" id="bPF" aria-label="${L("鮑森框架全貌圖","Pawson framework overview")}"><span class="l">${L("鮑森框架 全貌圖 ›","Pawson framework ›")}</span><span class="s">${L("全貌","Map")}</span></button>`+PFn.map((p,j)=>`<button class="rp${p.k==="g"?" gap":""}${S.pf===j?" cur":""}${S.pf!=null&&S.pf!==j?" out":""}" style="--pc:${p.c||"var(--mute)"}" data-pf="${j}"><b>${esc(p.k==="g"?L("沉默","Silence"):p.n)}<small>${esc(p.sub)}</small></b><span>${p.k==="g"?esc(p.n):esc(p.who)+(p.lead!=="—"?"・"+esc(p.lead):"")}</span></button>${p.eras.length?`<div class="rg">${p.eras.map(era).join("")}</div>`:""}`).join("");
 }
 function renderThemes(){
-  $("#thSel").innerHTML=`<option value="">全部事件</option>`+Object.entries(TH).map(([k,t])=>`<option value="${k}"${S.theme===k?" selected":""}>主題：${esc(t.n)}</option>`).join("");
+  $("#thSel").innerHTML=`<option value="">${L("全部事件","All events")}</option>`+Object.entries(TH).map(([k,t])=>`<option value="${k}"${S.theme===k?" selected":""}>${L("主題：","Theme: ")}${esc(t.n)}</option>`).join("");
 }
 function eraGuide(i){
   const z=ZLE[i],pe=PE[i],k=KE[i];if(!z&&!pe&&!k)return"";
-  const pw=z?`<p>${esc(z.s)}</p><div class="src">${lecLinks(z.lec)}</div>`:pe?`<p>${esc(pe.s)}</p><div class="src">${esc(pe.v)} ${esc(pe.ch)}</div>`:`<p class="stat">尚未收錄</p>`;
-  const kw=k?`${(k.tb||[]).length?`<ul class="tb">${k.tb.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:""}${k.s?`<p>${esc(k.s)}</p>`:""}<div class="src">${esc(k.src)}</div>`:`<p class="stat">尚未收錄</p>`;
-  return`<details class="guide"><summary><b>導讀</b><span>鮑森・歷史　凱勒・福音</span></summary><div class="duo"><div class="ax ap"><h5>鮑森</h5>${pw}</div><div class="ax ak"><h5>凱勒</h5>${kw}</div></div><div class="src">轉述摘要，非原文引用。</div></details>`;
+  const pw=z?`<p>${esc(z.s)}</p><div class="src">${lecLinks(z.lec)}</div>`:pe?`<p>${esc(pe.s)}</p><div class="src">${esc(pe.v)} ${esc(pe.ch)}</div>`:`<p class="stat">${L("尚未收錄","Not yet added")}</p>`;
+  const kw=k?`${(k.tb||[]).length?`<ul class="tb">${k.tb.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:""}${k.s?`<p>${esc(k.s)}</p>`:""}<div class="src">${esc(k.src)}</div>`:`<p class="stat">${L("尚未收錄","Not yet added")}</p>`;
+  return`<details class="guide"><summary><b>${L("導讀","Guide")}</b><span>${L("鮑森・歷史　凱勒・福音","Pawson: history · Keller: gospel")}</span></summary><div class="duo"><div class="ax ap"><h5>${L("鮑森","Pawson")}</h5>${pw}</div><div class="ax ak"><h5>${L("凱勒","Keller")}</h5>${kw}</div></div><div class="src">${L("轉述摘要，非原文引用。","Paraphrased summaries, not direct quotations.")}</div></details>`;
 }
 function renderList(){
   let h="",any=false;
   ERAS.forEach((r,i)=>{
     const es=EV.filter(e=>e.e===i&&match(e));if(!es.length)return;any=true;
-    h+=`<div class="ehead" id="era-${i}" style="border-color:${r.c}"><h2 style="color:${r.c}">${esc(r.n)}</h2><span>${esc(r.d)} · ${esc(r.b)}${KA.length?` · 福音軸：${esc(KA.find(a=>a.id===KAE[i]).n)}`:""}</span></div>`;
+    h+=`<div class="ehead" id="era-${i}" style="border-color:${r.c}"><h2 style="color:${r.c}">${esc(r.n)}</h2><span>${esc(r.d)} · ${esc(r.b)}${KA.length?` · ${L("福音軸：","Gospel axis: ")}${esc(KA.find(a=>a.id===KAE[i]).n)}`:""}</span></div>`;
     h+=eraGuide(i);
     h+=es.map(e=>{const tyc=(e.ty||[]).length+(back[e.id]||[]).length;
-      return`<button class="ev${S.sel===e.id?" sel":""}" style="--ec:${r.c}" data-ev="${e.id}"><div class="dt">${esc(e.d)}</div><div><div class="tt">${esc(e.t)}</div><div class="en">${esc(e.en)}${e.r?" · "+esc(refLabel(parseRef(e.r.split(";")[0]),"zh")):""}</div><div class="mks">${e.P?'<i class="mk mp" title="鮑森">鮑</i>':""}${e.K?'<i class="mk mkk" title="凱勒">凱</i>':""}${tyc?'<i class="mk mt" title="預表與應驗">預</i>':""}${issOf[e.id]?'<i class="mk mi" title="相關議題">議</i>':""}</div></div></button>`}).join("");
+      return`<button class="ev${S.sel===e.id?" sel":""}" style="--ec:${r.c}" data-ev="${e.id}"><div class="dt">${esc(e.d)}</div><div><div class="tt">${esc(e.t)}</div><div class="en">${EN?"":esc(e.en)}${e.r?(EN?"":" · ")+esc(refLabel(parseRef(e.r.split(";")[0]),"zh")):""}</div><div class="mks">${e.P?`<i class="mk mp" title="${L("鮑森","Pawson")}">${L("鮑","P")}</i>`:""}${e.K?`<i class="mk mkk" title="${L("凱勒","Keller")}">${L("凱","K")}</i>`:""}${tyc?`<i class="mk mt" title="${L("預表與應驗","Foreshadowing")}">${L("預","F")}</i>`:""}${issOf[e.id]?`<i class="mk mi" title="${L("相關議題","Issues")}">${L("議","I")}</i>`:""}</div></div></button>`}).join("");
   });
-  if(!any)h=`<p class="empty">沒有符合「${esc(S.q)}」的事件。試試人物名、書卷名或主題。</p>`;
-  if(S.theme)h=`<p class="stat" style="padding-top:12px">主題路徑：<b>${esc(TH[S.theme].n)}</b>，沿著時間順序讀，就是這個主題在整本聖經中的發展。</p>`+h;
+  if(!any)h=L(`<p class="empty">沒有符合「${esc(S.q)}」的事件。試試人物名、書卷名或主題。</p>`,`<p class="empty">No events match "${esc(S.q)}". Try a person, a book or a theme.</p>`);
+  if(S.theme)h=L(`<p class="stat" style="padding-top:12px">主題路徑：<b>${esc(TH[S.theme].n)}</b>，沿著時間順序讀，就是這個主題在整本聖經中的發展。</p>`,`<p class="stat" style="padding-top:12px">Theme path: <b>${esc(TH[S.theme].n)}</b>. Read in time order to follow how this theme develops through the whole Bible.</p>`)+h;
   $("#list").innerHTML=h;
 }
 
@@ -459,35 +469,35 @@ function axCard(v,cls,n,en){
   return`<div class="ax ${cls}"><h5>${n}<small>${en}</small>${v.tg?`<em>${esc(v.tg)}</em>`:""}</h5><p>${esc(v.s)}</p>${src}</div>`;
 }
 function renderIssues(open){
-  $("#iBody").innerHTML=`<p class="stat">以鮑森、凱勒兩位為主軸，其他牧者補充。「—」表示本站尚未找到該牧者直接論述此題的出處。內容皆為轉述摘要，請以原書核對。</p>`+ISS.map(x=>`<details class="iss" id="iss-${x.id}"${open===x.id?" open":""}><summary><b>${esc(x.n)}</b><span>${esc(x.q)}</span></summary>
-  <div class="duo">${axCard(x.p,"ap","鮑森","David Pawson")}${axCard(x.k,"ak","凱勒","Timothy Keller")}</div>
+  $("#iBody").innerHTML=`<p class="stat">${L("以鮑森、凱勒兩位為主軸，其他牧者補充。「—」表示本站尚未找到該牧者直接論述此題的出處。內容皆為轉述摘要，請以原書核對。","Pawson and Keller are the two main voices, with other pastors added. \"—\" means we have not yet found a source where that pastor addresses the question directly. All content is paraphrased; check the original books.")}</p>`+ISS.map(x=>`<details class="iss" id="iss-${x.id}"${open===x.id?" open":""}><summary><b>${esc(x.n)}</b><span>${esc(x.q)}</span></summary>
+  <div class="duo">${axCard(x.p,"ap",L("鮑森","Pawson"),"David Pawson")}${axCard(x.k,"ak",L("凱勒","Keller"),"Timothy Keller")}</div>
   ${x.o.length?`<div class="oth">${x.o.map(o=>`<div class="ov"><b>${esc(pastor(o.w).n)}</b><p>${esc(o.s)}</p><div class="src">${esc(o.src)}</div></div>`).join("")}</div>`:""}
-  ${x.agree||x.differ?`<div class="cmp">${x.agree?`<p><b>一致</b>${esc(x.agree)}</p>`:""}${x.differ?`<p><b>分歧</b>${esc(x.differ)}</p>`:""}</div>`:""}
+  ${x.agree||x.differ?`<div class="cmp">${x.agree?`<p><b>${L("一致","Agree")}</b>${esc(x.agree)}</p>`:""}${x.differ?`<p><b>${L("分歧","Differ")}</b>${esc(x.differ)}</p>`:""}</div>`:""}
   <div class="rel">${x.ev.filter(id=>byId[id]).map(id=>`<button class="chip" data-ev="${id}">${esc(byId[id].t)}</button>`).join("")}</div></details>`).join("");
   if(open){const el=$("#iss-"+open);if(el)setTimeout(()=>el.scrollIntoView({block:"start"}),30)}
 }
 function renderPanel(){
   const e=byId[S.sel];const P=$("#panel");
   if(!e&&S.pf!=null){renderPF();return}
-  if(!e){P.innerHTML=`<div style="padding-top:20px"><p class="kick" style="background:${ERAS[0].c}">從這裡開始</p><h2 class="ptitle">點選左邊的任何事件</h2><p>兩條主軸：大衛・鮑森看歷史（左側時間軸是他的四段五百年與兩段四百年沉默），提摩太・凱勒看福音（每個事件標出它在「創造、墮落、救贖、更新」中的位置）。每個事件都有經文、前因後果、預表，以及兩人的觀點並列；有爭議的題目，可在「議題」看其他牧者的分析。</p><p class="stat">共 ${EV.length} 個事件、14 個時代。經文：和合本（神版）與 KJV，皆為公有領域；ESV 有版權，以外部連結開啟。</p></div>`;return}
+  if(!e){P.innerHTML=EN?`<div style="padding-top:20px"><p class="kick" style="background:${ERAS[0].c}">Start here</p><h2 class="ptitle">Pick any event on the left</h2><p>Two axes: David Pawson reads the history (the timeline on the left is his four 500-year periods and two 400-year silences); Timothy Keller reads the gospel (each event is placed in creation, fall, redemption or restoration). Every event has scripture, causes and results, foreshadowing, and both men's views side by side; for disputed questions, see "Issues" for other pastors' analysis.</p><p class="stat">${EV.length} events in 14 eras. Scripture: King James Version (public domain); the ESV is copyrighted and opens as an external link.</p></div>`:`<div style="padding-top:20px"><p class="kick" style="background:${ERAS[0].c}">從這裡開始</p><h2 class="ptitle">點選左邊的任何事件</h2><p>兩條主軸：大衛・鮑森看歷史（左側時間軸是他的四段五百年與兩段四百年沉默），提摩太・凱勒看福音（每個事件標出它在「創造、墮落、救贖、更新」中的位置）。每個事件都有經文、前因後果、預表，以及兩人的觀點並列；有爭議的題目，可在「議題」看其他牧者的分析。</p><p class="stat">共 ${EV.length} 個事件、14 個時代。經文：和合本（神版）與 KJV，皆為公有領域；ESV 有版權，以外部連結開啟。</p></div>`;return}
   const r=ERAS[e.e],tok=++panelToken;
   const refs=(e.r||"").split(";").filter(Boolean);
   const tys=(e.ty||[]).map(t=>({id:t.to,n:t.n,dir:"→"})).concat((back[e.id]||[]).map(t=>({id:t.from,n:t.n,dir:"←"})));
     const act=actOf(e);
   P.style.setProperty("--ec",r.c);
-  P.innerHTML=`<div class="sheetbar"><span>${esc(r.n)}</span><button class="btn" id="pClose">關閉</button></div>
-  <div style="padding-top:16px"><span class="kick" style="background:${r.c}">${esc(r.n)}</span>${act?`<span class="act">福音軸・${esc(act.n)}</span>`:""}
-  <h2 class="ptitle">${esc(e.t)}</h2><div class="pen">${esc(e.en)}${e.p?" · "+esc(e.p):""}</div>
-  <p class="dates"><b>${esc(e.d)}</b>${e.alt?`<em>其他說法：${esc(e.alt)}</em>`:""}</p>
-  ${refs.map((x,i)=>{const p=parseRef(x);return`<div class="verse"><div class="ref"><b>${esc(refLabel(p,"zh"))}</b><span>${esc(refLabel(p,"en"))}</span><button class="lnk" data-read="${p.b} ${p.c}" data-hi="${p.a}-${p.z}">讀整章</button><a class="lnk" href="${esvUrl(p)}" target="_blank" rel="noopener">ESV ↗</a></div><div id="vs${i}"><p class="stat">載入經文中…</p></div></div>`}).join("")}
-  ${!refs.length?`<p class="stat">此時期沒有正典記載的經文。</p>`:""}
-  <div class="cfx"><div><h4>背景</h4><p>${esc(e.bg)}</p></div><div><h4>前因</h4><p>${esc(e.c)}</p></div><div><h4>後果與意義</h4><p>${esc(e.f)}</p></div></div>
-  ${(e.l||[]).length?`<div class="sec"><h3>相關事件<small>順著因果鏈讀下去</small></h3><div class="rel">${e.l.map(id=>byId[id]?`<button class="chip" data-ev="${id}"><span class="dot" style="background:${ERAS[byId[id].e].c}"></span>${esc(byId[id].t)}</button>`:"").join("")}</div></div>`:""}
-  ${tys.length?`<div class="sec"><h3>預表與應驗<small>舊約 ↔ 新約</small></h3><div class="ty">${tys.map(t=>byId[t.id]?`<button data-ev="${t.id}"><span class="arr">${t.dir}</span><div><b>${esc(byId[t.id].t)}（${esc(ERAS[byId[t.id].e].n)}）</b><span>${esc(t.n)}</span></div></button>`:"").join("")}</div></div>`:""}
-  <div class="sec"><h3>兩條主軸<small>鮑森看歷史，凱勒看福音</small></h3><div class="duo">${axCard(e.P,"ap","鮑森","David Pawson")}${axCard(e.K,"ak","凱勒","Timothy Keller")}</div></div>
-  ${issOf[e.id]?`<div class="sec"><h3>相關議題<small>鮑森、凱勒與其他牧者的對照</small></h3><div class="rel">${issOf[e.id].map(x=>`<button class="chip" data-iss="${x.id}">${esc(x.n)}</button>`).join("")}</div></div>`:""}
-  ${e.O.length?`<details class="others"><summary>其他牧者（${e.O.length}）</summary>${e.O.map(v=>{const pp=pastor(v.w);return`<div class="ov"><b>${esc(pp.n)}</b><p>${esc(v.s)}</p>${v.src?`<div class="src">${esc(v.src)}</div>`:""}</div>`}).join("")}</details>`:""}
-  </div><div class="pnav"><button class="btn" id="pPrev">← 上一個事件</button><button class="btn" id="pNext">下一個事件 →</button></div>`;
+  P.innerHTML=`<div class="sheetbar"><span>${esc(r.n)}</span><button class="btn" id="pClose">${L("關閉","Close")}</button></div>
+  <div style="padding-top:16px"><span class="kick" style="background:${r.c}">${esc(r.n)}</span>${act?`<span class="act">${L("福音軸・","Gospel axis: ")}${esc(act.n)}</span>`:""}
+  <h2 class="ptitle">${esc(e.t)}</h2><div class="pen">${EN?esc(e.p||""):esc(e.en)+(e.p?" · "+esc(e.p):"")}</div>
+  <p class="dates"><b>${esc(e.d)}</b>${e.alt?`<em>${L("其他說法：","Other views: ")}${esc(e.alt)}</em>`:""}</p>
+  ${refs.map((x,i)=>{const p=parseRef(x);return`<div class="verse"><div class="ref"><b>${esc(refLabel(p,"zh"))}</b>${EN?"":`<span>${esc(refLabel(p,"en"))}</span>`}<button class="lnk" data-read="${p.b} ${p.c}" data-hi="${p.a}-${p.z}">${L("讀整章","Read chapter")}</button><a class="lnk" href="${esvUrl(p)}" target="_blank" rel="noopener">ESV ↗</a></div><div id="vs${i}"><p class="stat">${L("載入經文中…","Loading…")}</p></div></div>`}).join("")}
+  ${!refs.length?`<p class="stat">${L("此時期沒有正典記載的經文。","No canonical scripture records this period.")}</p>`:""}
+  <div class="cfx"><div><h4>${L("背景","Background")}</h4><p>${esc(e.bg)}</p></div><div><h4>${L("前因","Cause")}</h4><p>${esc(e.c)}</p></div><div><h4>${L("後果與意義","Result & meaning")}</h4><p>${esc(e.f)}</p></div></div>
+  ${(e.l||[]).length?`<div class="sec"><h3>${L("相關事件","Related events")}<small>${L("順著因果鏈讀下去","Follow the chain of cause and effect")}</small></h3><div class="rel">${e.l.map(id=>byId[id]?`<button class="chip" data-ev="${id}"><span class="dot" style="background:${ERAS[byId[id].e].c}"></span>${esc(byId[id].t)}</button>`:"").join("")}</div></div>`:""}
+  ${tys.length?`<div class="sec"><h3>${L("預表與應驗","Foreshadowing & fulfillment")}<small>${L("舊約 ↔ 新約","OT ↔ NT")}</small></h3><div class="ty">${tys.map(t=>byId[t.id]?`<button data-ev="${t.id}"><span class="arr">${t.dir}</span><div><b>${esc(byId[t.id].t)}${L("（"+esc(ERAS[byId[t.id].e].n)+"）"," ("+esc(ERAS[byId[t.id].e].n)+")")}</b><span>${esc(t.n)}</span></div></button>`:"").join("")}</div></div>`:""}
+  <div class="sec"><h3>${L("兩條主軸","Two axes")}<small>${L("鮑森看歷史，凱勒看福音","Pawson reads the history, Keller the gospel")}</small></h3><div class="duo">${axCard(e.P,"ap",L("鮑森","Pawson"),"David Pawson")}${axCard(e.K,"ak",L("凱勒","Keller"),"Timothy Keller")}</div></div>
+  ${issOf[e.id]?`<div class="sec"><h3>${L("相關議題","Related issues")}<small>${L("鮑森、凱勒與其他牧者的對照","Pawson, Keller and other pastors compared")}</small></h3><div class="rel">${issOf[e.id].map(x=>`<button class="chip" data-iss="${x.id}">${esc(x.n)}</button>`).join("")}</div></div>`:""}
+  ${e.O.length?`<details class="others"><summary>${L("其他牧者","Other pastors")} (${e.O.length})</summary>${e.O.map(v=>{const pp=pastor(v.w);return`<div class="ov"><b>${esc(pp.n)}</b><p>${esc(v.s)}</p>${v.src?`<div class="src">${esc(v.src)}</div>`:""}</div>`}).join("")}</details>`:""}
+  </div><div class="pnav"><button class="btn" id="pPrev">${L("← 上一個事件","← Previous")}</button><button class="btn" id="pNext">${L("下一個事件 →","Next →")}</button></div>`;
   refs.forEach((x,i)=>versesHtml(x,S.lang).then(h=>{if(tok===panelToken){const el=$("#vs"+i);if(el)el.innerHTML=h}}));
 }
 function noteForm(ev){
@@ -506,18 +516,18 @@ function renderAll(){renderBand();renderThemes();renderList();renderPanel();if($
 let RD={b:"GEN",c:1,hi:null};
 async function openRead(b,c,hi){
   RD={b,c,hi};const d=$("#dRead");if(!d.open)d.showModal();
-  $("#rTitle").textContent=BOOK[b].zh+" "+c+" 章 · "+BOOK[b].en+" "+c;
+  $("#rTitle").textContent=EN?BOOK[b].en+" "+c:BOOK[b].zh+" "+c+" 章 · "+BOOK[b].en+" "+c;
   $("#rPrev").disabled=c<=1;$("#rNext").disabled=c>=BOOK[b].n;document.querySelector("[data-rp='-1']").disabled=c<=1;document.querySelector("[data-rp='1']").disabled=c>=BOOK[b].n;
-  $("#rBody").innerHTML=`<p class="stat">載入中…</p>`;
+  $("#rBody").innerHTML=`<p class="stat">${L("載入中…","Loading…")}</p>`;
   try{
     const [zh,en]=await Promise.all([S.lang!=="en"?loadBook(b,"zh"):null,S.lang!=="zh"?loadBook(b,"en"):null]);
     const n=Math.max(zh?zh[c-1].length:0,en?en[c-1].length:0);
     const [a,z]=hi?hi.split("-").map(Number):[0,0];let h="";
     for(let v=1;v<=n;v++)h+=`<div class="rv${v>=a&&v<=z?" hi":""}" id="rv${v}"><div class="n">${v}</div>${zh?`<div class="z">${esc(zh[c-1][v-1]||"")}</div>`:""}${en?`<div class="${zh?"e":"z"}" ${zh?"":"style=\"font-family:Georgia,serif\""}>${esc(en[c-1][v-1]||"")}</div>`:""}</div>`;
     const evs=EV.filter(e=>e.rd===b+" "+c||(e.r||"").split(";").some(x=>{const p=parseRef(x);return p&&p.b===b&&p.c===c}));
-    if(evs.length)h=`<p class="stat">本章相關事件：${evs.map(e=>`<button class="lnk" data-ev="${e.id}">${esc(e.t)}</button>`).join("、")}</p>`+h;
+    if(evs.length)h=`<p class="stat">${L("本章相關事件：","Events in this chapter: ")}${evs.map(e=>`<button class="lnk" data-ev="${e.id}">${esc(e.t)}</button>`).join(L("、",", "))}</p>`+h;
     $("#rBody").innerHTML=h;if(a){const el=$("#rv"+a);if(el)el.scrollIntoView({block:"center"})}else{$("#dRead").scrollTop=0;$("#rBody").scrollTop=0}
-  }catch(e){$("#rBody").innerHTML=`<p>經文載入失敗，請重新整理。</p>`}
+  }catch(e){$("#rBody").innerHTML=`<p>${L("經文載入失敗，請重新整理。","Could not load the text. Please refresh.")}</p>`}
 }
 
 /* ---------- notes overview & settings ---------- */
@@ -528,8 +538,8 @@ function renderNotes(){
   $("#nBody").innerHTML=ns.length?ns.map(n=>{const e=byId[n.ev],pp=pastor(n.p);return`<div class="note"><div class="h"><button class="lnk" data-ev="${n.ev}">${esc(e?e.t:n.ev)}</button><span class="stat">${esc(e?ERAS[e.e].n:"")}</span><b>${esc(n.p==="me"?"我的反思":pp.n)}</b></div><p>${esc(n.text)}</p>${n.src?`<div class="src">出處：${esc(n.src)}</div>`:""}</div>`}).join(""):`<p class="empty">還沒有筆記。打開任何事件，在最下方「我的牧者筆記」加入第一筆。</p>`;
 }
 function renderSet(){
-  $("#sBody").innerHTML=`<div class="pl">${S.pastors.map(p=>{const c=EV.filter(e=>e.v.some(v=>v.w===p.id)).length;return`<div class="pr"><div><b>${esc(p.n)}</b> ${esc(p.en)}<small>${esc(p.note||"")}</small></div><span class="stat">${c} 個事件</span></div>`}).join("")}</div>
-  <div class="sec"><h3>關於經文與資料</h3><p class="stat">中文：新標點和合本（神版），來源 BibleAquifer（CC0 公有領域）。英文：King James Version（公有領域）。ESV 有版權，以外部連結到 esv.org 閱讀。年代採福音派常用的年代，有爭議的地方另附其他說法。牧者觀點是轉述摘要，請以原書核對。</p></div>`;
+  $("#sBody").innerHTML=`<div class="pl">${S.pastors.map(p=>{const c=EV.filter(e=>e.v.some(v=>v.w===p.id)).length;return`<div class="pr"><div><b>${esc(p.n)}</b> ${esc(p.en)}<small>${esc(p.note||"")}</small></div><span class="stat">${c} ${L("個事件","events")}</span></div>`}).join("")}</div>
+  ${L(`<div class="sec"><h3>關於經文與資料</h3><p class="stat">中文：新標點和合本（神版），來源 BibleAquifer（CC0 公有領域）。英文：King James Version（公有領域）。ESV 有版權，以外部連結到 esv.org 閱讀。年代採福音派常用的年代，有爭議的地方另附其他說法。牧者觀點是轉述摘要，請以原書核對。</p></div>`,`<div class="sec"><h3>About the text and data</h3><p class="stat">Scripture: King James Version (public domain). The Chinese version uses the Chinese Union Version (Shen edition) from BibleAquifer (CC0). The ESV is copyrighted and opens on esv.org. Dates follow common evangelical chronology, with other views noted where disputed. Pastors' views are paraphrased summaries; check the original books.</p></div>`)}`;
 }
 let pEdit=null;
 
@@ -543,45 +553,45 @@ function renderPFBand(){renderBand()}
 function renderPF(){
   const p=PF[S.pf],P=$("#panel");
   const eras=p.eras.map(i=>`<button class="chip" data-era="${i}"><span class="dot" style="background:${ERAS[i].c}"></span>${esc(ERAS[i].n)}</button>`).join("");
-  P.innerHTML=`<div class="sheetbar"><span>鮑森框架</span><button class="btn" id="pClose">關閉</button></div>
-  <p class="kick" style="background:${p.c||"#6d6458"}">${esc(p.k==="g"?"空檔":"鮑森框架")}・${esc(p.y)}</p>
+  P.innerHTML=`<div class="sheetbar"><span>${L("鮑森框架","Pawson framework")}</span><button class="btn" id="pClose">${L("關閉","Close")}</button></div>
+  <p class="kick" style="background:${p.c||"#6d6458"}">${esc(p.k==="g"?L("空檔","Gap"):L("鮑森框架","Pawson framework"))}${L("・"," · ")}${esc(p.y)}</p>
   <h2 class="ptitle">${esc(p.n)}${p.sub?`<small style="font-size:.6em;color:var(--mute);margin-left:8px">${esc(p.sub)}</small>`:""}</h2>
-  ${p.k==="p"?`<table class="pft"><tr><th>事件</th><td>${esc(p.ev)}</td></tr><tr><th>代表人物</th><td>${esc(p.who)}</td></tr><tr><th>帶領者</th><td>${esc(p.lead)}${p.leadW?`<br><small class="stat">${esc(p.leadW)}</small>`:""}</td></tr></table>`:`<p><b>${esc(p.ev)}</b></p>`}
-  <div class="sec"><h3>鮑森怎麼說<small>轉述摘要</small></h3><p>${esc(p.s)}</p>${p.world?`<p class="stat">同時期的世界：${esc(p.world)}</p>`:""}</div>
-  ${(p.books||[]).length?`<div class="sec"><h3>這段時期的書卷<small>點選讀第一章</small></h3><div class="rel">${p.books.map(b=>`<button class="chip" data-read="${b[0]}">${esc(b[1])}</button>`).join("")}</div></div>`:""}
-  ${eras?`<div class="sec"><h3>包含的時代<small>點選跳到事件列表</small></h3><div class="rel">${eras}</div></div>`:`<div class="sec"><p class="stat">這段期間沒有正典事件。</p></div>`}
-  <div class="sec"><p class="stat">出處：<a class="lnk" href="${window.PF_SRC.u}" target="_blank" rel="noopener">${esc(window.PF_SRC.n)} ↗</a></p><button class="btn" id="bPF2">看全貌圖</button></div>`;
+  ${p.k==="p"?`<table class="pft"><tr><th>${L("事件","Event")}</th><td>${esc(p.ev)}</td></tr><tr><th>${L("代表人物","Key person")}</th><td>${esc(p.who)}</td></tr><tr><th>${L("帶領者","Leaders")}</th><td>${esc(p.lead)}${p.leadW?`<br><small class="stat">${esc(p.leadW)}</small>`:""}</td></tr></table>`:`<p><b>${esc(p.ev)}</b></p>`}
+  <div class="sec"><h3>${L("鮑森怎麼說","What Pawson says")}<small>${L("轉述摘要","paraphrased")}</small></h3><p>${esc(p.s)}</p>${p.world?`<p class="stat">${L("同時期的世界：","Meanwhile in the world: ")}${esc(p.world)}</p>`:""}</div>
+  ${(p.books||[]).length?`<div class="sec"><h3>${L("這段時期的書卷","Books of this period")}<small>${L("點選讀第一章","tap to read chapter 1")}</small></h3><div class="rel">${p.books.map(b=>`<button class="chip" data-read="${b[0]}">${esc(b[1])}</button>`).join("")}</div></div>`:""}
+  ${eras?`<div class="sec"><h3>${L("包含的時代","Eras in this period")}<small>${L("點選跳到事件列表","tap to jump to the events")}</small></h3><div class="rel">${eras}</div></div>`:`<div class="sec"><p class="stat">${L("這段期間沒有正典事件。","No canonical events in this period.")}</p></div>`}
+  <div class="sec"><p class="stat">${L("出處：","Source: ")}<a class="lnk" href="${window.PF_SRC.u}" target="_blank" rel="noopener">${esc(window.PF_SRC.n)} ↗</a></p><button class="btn" id="bPF2">${L("看全貌圖","Overview chart")}</button></div>`;
 }
 function pfChart(){
   const X=y=>40+(y+2100)/2250*920,blk=[["pre",-2100,-2000],["p1",-2000,-1500],["p2",-1500,-1000],["p3",-1000,-500],["p4",-500,0],["nt",0,100]],get=id=>PF.find(p=>p.id===id);
   let g=`<defs><pattern id="hx" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="var(--panel)"/><rect width="2" height="8" fill="var(--mute)" opacity=".45"/></pattern></defs>`;
-  g+=`<text x="4" y="48" font-size="12" fill="var(--mute)">時期</text><text x="4" y="126" font-size="12" fill="var(--mute)">帶領</text><text x="4" y="200" font-size="12" fill="var(--mute)">盛衰</text>`;
+  g+=`<text x="4" y="48" font-size="12" fill="var(--mute)">${L("時期","Period")}</text><text x="4" y="126" font-size="12" fill="var(--mute)">${L("帶領","Leaders")}</text><text x="4" y="200" font-size="12" fill="var(--mute)">${L("盛衰","Rise/fall")}</text>`;
   blk.forEach(([id,a,b])=>{const p=get(id),x=X(a),w=X(b)-X(a);
     g+=`<rect x="${x}" y="22" width="${w-2}" height="44" fill="${p.c}"/><text x="${x+w/2}" y="40" text-anchor="middle" font-size="${w>80?14:12}" font-weight="700" fill="#fff">${esc(p.n)}</text><text x="${x+w/2}" y="58" text-anchor="middle" font-size="11.5" fill="#fff">${esc(w>80?p.who:"")}</text>`;
     g+=`<rect x="${x}" y="108" width="${w-2}" height="28" fill="${p.c}" opacity=".22"/><text x="${x+w/2}" y="127" text-anchor="middle" font-size="12.5" fill="currentColor">${esc(w>80?p.lead:"")}</text>`});
-  [[-1900,-1500,"四百年沉默（埃及）"],[-430,-30,"四百年沉默"]].forEach(([a,b,t])=>{g+=`<rect x="${X(a)}" y="72" width="${X(b)-X(a)}" height="26" fill="url(#hx)" stroke="var(--mute)" stroke-width=".6"/><text x="${(X(a)+X(b))/2}" y="89" text-anchor="middle" font-size="12" fill="currentColor">${t}</text>`});
+  [[-1900,-1500,L("四百年沉默（埃及）","400 years of silence (Egypt)")],[-430,-30,L("四百年沉默","400 years of silence")]].forEach(([a,b,t])=>{g+=`<rect x="${X(a)}" y="72" width="${X(b)-X(a)}" height="26" fill="url(#hx)" stroke="var(--mute)" stroke-width=".6"/><text x="${(X(a)+X(b))/2}" y="89" text-anchor="middle" font-size="12" fill="currentColor">${t}</text>`});
   const C=window.PF_CURVE||[],Y=v=>250-v*0.9;
   g+=`<polyline fill="none" stroke="#3f9a55" stroke-width="2.5" stroke-dasharray="7 5" points="${C.map(([y,v])=>X(y).toFixed(1)+","+Y(v).toFixed(1)).join(" ")}"/>`;
-  g+=`<circle cx="${X(-1000)}" cy="${Y(92)}" r="4" fill="#3f9a55"/><text x="${X(-1000)+8}" y="${Y(92)+4}" font-size="12" fill="currentColor">大衛：以色列的黃金時代</text><text x="${X(-586)+6}" y="${Y(10)+4}" font-size="12" fill="currentColor">失去土地</text>`;
-  [-2000,-1500,-1000,-500,0].forEach(y=>{g+=`<line x1="${X(y)}" x2="${X(y)}" y1="14" y2="256" stroke="var(--line)"/><text x="${X(y)}" y="272" text-anchor="middle" font-size="12" fill="var(--mute)">${y?"前"+(-y):"主前／主後"}</text>`});
+  g+=`<circle cx="${X(-1000)}" cy="${Y(92)}" r="4" fill="#3f9a55"/><text x="${X(-1000)+8}" y="${Y(92)+4}" font-size="12" fill="currentColor">${L("大衛：以色列的黃金時代","David: Israel's golden age")}</text><text x="${X(-586)+6}" y="${Y(10)+4}" font-size="12" fill="currentColor">${L("失去土地","Land lost")}</text>`;
+  [-2000,-1500,-1000,-500,0].forEach(y=>{g+=`<line x1="${X(y)}" x2="${X(y)}" y1="14" y2="256" stroke="var(--line)"/><text x="${X(y)}" y="272" text-anchor="middle" font-size="12" fill="var(--mute)">${y?L("前"+(-y),(-y)+" BC"):L("主前／主後","BC / AD")}</text>`});
   return`<svg viewBox="0 0 1000 280" role="img" aria-label="鮑森框架：四段五百年、兩段四百年沉默、領袖角色與盛衰曲線" style="color:var(--ink)">${g}</svg>`;
 }
 function canonHtml(){
-  const PT={"前":"被擄前","中":"被擄期間","後":"被擄後"},PTm=window.PF_PROPHET_TIME||{};
-  return window.PF_CANON[S.canon].map(gp=>`<div class="cgrp"><h4>${esc(gp.n)} <small class="stat">${esc(gp.en)}</small></h4>${gp.note?`<p>${esc(gp.note)}</p>`:""}<div class="rel">${gp.b.map(([c,alt])=>{const t=PTm[c];return`<button class="chip" data-read="${c} 1">${alt&&S.canon==="heb"&&alt.includes("一卷")?esc(alt):esc(bk(c).zh)+(alt&&S.canon==="heb"?` <small>${esc(alt)}</small>`:"")}${t?` <span class="pt" title="${t.includes("*")?"年代有爭議":""}">${PT[t[0]]}${t.includes("*")?"?":""}</span>`:""}</button>`}).join("")}</div></div>`).join("");
+  const PT=EN?{"前":"pre-exile","中":"exile","後":"post-exile"}:{"前":"被擄前","中":"被擄期間","後":"被擄後"},PTm=window.PF_PROPHET_TIME||{};
+  return window.PF_CANON[S.canon].map(gp=>`<div class="cgrp"><h4>${esc(gp.n)}${EN?"":` <small class="stat">${esc(gp.en)}</small>`}</h4>${gp.note?`<p>${esc(gp.note)}</p>`:""}<div class="rel">${gp.b.map(([c,alt])=>{const t=PTm[c];return`<button class="chip" data-read="${c} 1">${alt&&S.canon==="heb"&&(alt.includes("一卷")||alt.includes("one book"))?esc(alt):esc(bk(c).zh)+(alt&&S.canon==="heb"?` <small>${esc(alt)}</small>`:"")}${t?` <span class="pt" title="${t.includes("*")?L("年代有爭議","date disputed"):""}">${PT[t[0]]}${t.includes("*")?"?":""}</span>`:""}</button>`}).join("")}</div></div>`).join("");
 }
 function renderPFDialog(){
   const rows=PF.filter(p=>p.k==="p").map(p=>`<tr><td><span class="sw" style="background:${p.c}"></span><b>${esc(p.n)}</b><br><small class="stat">${esc(p.sub)}</small></td><td>${esc(p.ev)}</td><td>${esc(p.who)}</td><td>${esc(p.lead)}${p.leadW?`<br><small class="stat">${esc(p.leadW)}</small>`:""}</td><td>${(p.books||[]).map(b=>esc(b[1])).join("、")}</td></tr>`).join("");
-  $("#pfBody").innerHTML=`<p class="stat">鮑森把以色列的歷史分成四段、每段約五百年，用一個事件和一位人物標記；再插進兩段各四百年、神沉默的空檔。年份是方便記憶的整數；下方事件列表仍用較精確的年代。</p>
+  $("#pfBody").innerHTML=`<p class="stat">${L("鮑森把以色列的歷史分成四段、每段約五百年，用一個事件和一位人物標記；再插進兩段各四百年、神沉默的空檔。年份是方便記憶的整數；下方事件列表仍用較精確的年代。","Pawson divides Israel's history into four periods of about five hundred years, each marked by an event and a person, with two gaps of four hundred years when God was silent. The years are round numbers for memory; the event list keeps more precise dates.")}</p>
   <div class="pfchart">${pfChart()}</div>
-  <div class="sec"><h3>四段 × 五百年<small>點時期名稱看細節</small></h3><div class="scroll" style="overflow-x:auto"><table class="pft"><tr><th>時期</th><th>事件</th><th>人物</th><th>帶領者</th><th>書卷</th></tr>${rows}</table></div>
-  <p class="stat">帶領者的轉移：族長 → 先知 → 君王 → 祭司。不是說別的時期沒有先知或祭司，而是主要領袖角色換了；直到耶穌，才把先知、祭司、君王集於一身。</p></div>
-  <div class="sec"><h3>書卷的兩種排法</h3><div class="seg" id="canonSeg" role="group" aria-label="書卷排法"><button data-canon="heb"${S.canon==="heb"?' class="on"':""}>希伯來正典三分</button><button data-canon="en"${S.canon==="en"?' class="on"':""}>英文／中文聖經</button></div>
-  <p class="stat">${S.canon==="heb"?"耶穌在以馬忤斯路上就是按律法、先知、聖卷來講解（路24:27,44）。鮑森認為這樣分比較好，因為它提醒我們：這不是一般歷史，而是先知歷史。":"中英文聖經把歷史書全放在前面，再來是詩歌書和先知書。鮑森認為這種排法讓我們看舊約的方式和猶太人很不一樣。"}金色標籤＝先知書寫於被擄前、期間或之後；「?」表示年代有爭議。</p>
+  <div class="sec"><h3>${L("四段 × 五百年","Four periods × 500 years")}<small>${L("點時期名稱看細節","tap a period for details")}</small></h3><div class="scroll" style="overflow-x:auto"><table class="pft"><tr><th>${L("時期","Period")}</th><th>${L("事件","Event")}</th><th>${L("人物","Person")}</th><th>${L("帶領者","Leaders")}</th><th>${L("書卷","Books")}</th></tr>${rows}</table></div>
+  <p class="stat">${L("帶領者的轉移：族長 → 先知 → 君王 → 祭司。不是說別的時期沒有先知或祭司，而是主要領袖角色換了；直到耶穌，才把先知、祭司、君王集於一身。","Leadership shifts: patriarchs → prophets → kings → priests. Other periods had prophets and priests too; the point is that the main leadership role changed. Only in Jesus are prophet, priest and king united in one person.")}</p></div>
+  <div class="sec"><h3>${L("書卷的兩種排法","Two ways to order the books")}</h3><div class="seg" id="canonSeg" role="group" aria-label="${L("書卷排法","Book order")}"><button data-canon="heb"${S.canon==="heb"?' class="on"':""}>${L("希伯來正典三分","Hebrew Bible (three parts)")}</button><button data-canon="en"${S.canon==="en"?' class="on"':""}>${L("英文／中文聖經","English Bible order")}</button></div>
+  <p class="stat">${EN?(S.canon==="heb"?"On the Emmaus road Jesus explained the Law, the Prophets and the Writings (Luke 24:27, 44). Pawson preferred this division because it reminds us this is prophetic history, not ordinary history.":"English Bibles put all the history books first, then poetry, then prophets. Pawson thought this order makes us read the Old Testament very differently from the Jews.")+" Gold tags show whether a prophet wrote before, during or after the exile; \"?\" means the date is disputed.":(S.canon==="heb"?"耶穌在以馬忤斯路上就是按律法、先知、聖卷來講解（路24:27,44）。鮑森認為這樣分比較好，因為它提醒我們：這不是一般歷史，而是先知歷史。":"中英文聖經把歷史書全放在前面，再來是詩歌書和先知書。鮑森認為這種排法讓我們看舊約的方式和猶太人很不一樣。")+"金色標籤＝先知書寫於被擄前、期間或之後；「?」表示年代有爭議。"}</p>
   <div id="canonBody">${canonHtml()}</div></div>
-  <div class="sec"><h3>讀經原則<small>第01講，轉述</small></h3><ul class="pfl">${window.PF_PRINCIPLES.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
-  <div class="sec"><h3>地理：兩張地圖<small>第01講，轉述</small></h3><ul class="pfl">${window.PF_GEO.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
-  <div class="sec"><p class="stat">出處：<a class="lnk" href="${window.PF_SRC.u}" target="_blank" rel="noopener">${esc(window.PF_SRC.n)} ↗</a>・<a class="lnk" href="${window.PF_SRC.all}" target="_blank" rel="noopener">全集列表 ↗</a></p></div>`;
+  <div class="sec"><h3>${L("讀經原則","Principles for reading")}<small>${L("第01講，轉述","Lecture 1, paraphrased")}</small></h3><ul class="pfl">${window.PF_PRINCIPLES.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
+  <div class="sec"><h3>${L("地理：兩張地圖","Geography: two maps")}<small>${L("第01講，轉述","Lecture 1, paraphrased")}</small></h3><ul class="pfl">${window.PF_GEO.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
+  <div class="sec"><p class="stat">${L("出處：","Source: ")}<a class="lnk" href="${window.PF_SRC.u}" target="_blank" rel="noopener">${esc(window.PF_SRC.n)} ↗</a>・<a class="lnk" href="${window.PF_SRC.all}" target="_blank" rel="noopener">${L("全集列表","All lectures")} ↗</a></p></div>`;
 }
 function openPF(){$("#dPF").showModal();renderPFDialog();renderPFBand()}
 /* ---------- events ---------- */
@@ -611,6 +621,7 @@ document.addEventListener("click",async ev=>{
   switch(t.id){
     case"pClose":closeSheet();break;
     case"bPF":case"bPF2":openPF();break;
+    case"bUI":try{localStorage.setItem("bt-ui",EN?"zh":"en")}catch(e){}location.reload();break;
     case"bIss":$("#dIss").showModal();renderIssues();break;
     case"bPF3":$("#dSet").close();openPF();break;
     case"bFz":setFz((S.fz+1)%3);break;
@@ -643,9 +654,9 @@ document.addEventListener("submit",async ev=>{
 });
 let qt;$("#q").addEventListener("input",e=>{clearTimeout(qt);qt=setTimeout(()=>{S.q=e.target.value.trim();renderBand();renderList()},150)});
 document.addEventListener("keydown",e=>{if(e.target.matches("input,textarea,select"))return;if(e.key==="ArrowDown"||e.key==="j"){if(S.sel){e.preventDefault();step(1)}}if(e.key==="ArrowUp"||e.key==="k"){if(S.sel){e.preventDefault();step(-1)}}});
-const FZ=[[0.92,"小"],[1,"中"],[1.15,"大"]];
+const FZ=EN?[[0.92,"S"],[1,"M"],[1.15,"L"]]:[[0.92,"小"],[1,"中"],[1.15,"大"]];
 S.fz=+LS.get("bt-fz",1);
-function setFz(i){S.fz=i;document.documentElement.style.setProperty("--fz",FZ[i][0]);$("#bFz").textContent="字級 "+FZ[i][1];LS.set("bt-fz",i)}
+function setFz(i){S.fz=i;document.documentElement.style.setProperty("--fz",FZ[i][0]);$("#bFz").textContent=L("字級 ","Size ")+FZ[i][1];LS.set("bt-fz",i)}
 setFz(S.fz in FZ?S.fz:1);
 function closeSheet(){$("#panel").classList.remove("open");document.body.classList.remove("sheet")}
 function swipe(el,fn){let x0,y0,t0;el.addEventListener("touchstart",e=>{const t=e.touches[0];x0=t.clientX;y0=t.clientY;t0=Date.now()},{passive:true});
@@ -657,6 +668,13 @@ if("serviceWorker" in navigator&&location.protocol==="https:"&&/github\.io$/.tes
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2600)}
 function fromHash(){const h=location.hash.slice(1);if(byId[h])select(h,false)}
 window.addEventListener("hashchange",fromHash);
+if(EN){document.title="Bible Timeline";
+  $("h1").innerHTML="Bible Timeline<small>Pawson's history axis × Keller's gospel axis</small>";
+  $("#q").placeholder="Search events, people, verses";$("#bUI").textContent="中文";$("#bIss").textContent="Issues";$("#bSet").textContent="Settings";
+  $("#dSet h3").textContent="Settings";$("#dSet .seth").textContent="Pastors and sources";
+  const sr=document.querySelectorAll("#dSet .setr");sr[0].style.display="none";sr[1].querySelector("span").textContent="Text size";sr[2].querySelector("span").textContent="Pawson's framework";$("#bPF3").textContent="Overview chart";
+  $("#dPF h3").textContent="Pawson's framework: two thousand years of the Old Testament";$("#dIss h3").textContent="Issues compared";
+  document.querySelectorAll("[data-close]").forEach(b=>b.textContent="Close");$("#rPrev").textContent="Prev chapter";$("#rNext").textContent="Next chapter";}
 $("#thSel").addEventListener("change",e=>{S.theme=e.target.value||null;renderAll();window.scrollTo({top:0})});
 /* 捲動時，左側時間軸標出目前所在的時代 */
 let spyT;function spy(){clearTimeout(spyT);spyT=setTimeout(()=>{const hs=[...document.querySelectorAll(".ehead")];let cur=null;for(const h of hs){if(h.getBoundingClientRect().top<=window.innerHeight*0.35)cur=+h.id.slice(4);else break}
