@@ -161,13 +161,27 @@ v:[{k:"t",w:"過去派（Preterism）",s:"橄欖山講論（太24）大部分已
 {k:"t",w:"未來派",s:"橄欖山講論主要指向基督再來之前的大災難。"},
 {k:"t",w:"部分過去派",s:"經文的前半段應驗在後70年，後半段指向末日再來。"}]},
 
-{id:"revelation",e:13,t:"啟示錄",en:"Revelation",d:"約後95",y:95,alt:"早期說：約後68（尼祿時期）",r:"REV 1:17-18;REV 3:15-16;REV 5:5-6",rd:"REV 1",p:"使徒約翰",bg:"約翰被流放到拔摩島；羅馬皇帝崇拜帶來壓力。",c:"小亞細亞七個教會面臨逼迫與妥協。",f:"揭開「被殺的羔羊」才是坐寶座者；歷史的結局握在神手中。",l:["jerusalem-destroyed","newcreation","isaiah-call","judah-blessing"],th:["kingdom","messiah"],
+{id:"revelation",e:13,t:"啟示錄",en:"Revelation",d:"約後95",y:95,alt:"早期說：約後68（尼祿時期）",r:"REV 1:17-18;REV 3:15-16;REV 5:5-6",rd:"REV 1",p:"使徒約翰",bg:"約翰被流放到拔摩島；羅馬皇帝崇拜帶來壓力。",c:"小亞細亞七個教會面臨逼迫與妥協。",f:"揭開「被殺的羔羊」才是坐寶座者；歷史的結局握在神手中。",l:["jerusalem-destroyed","rev-churches","newcreation","isaiah-call","judah-blessing"],th:["kingdom","messiah"],
 v:[{k:"p",w:"chan",s:"陳恩藩用老底嘉教會「不冷也不熱」為主軸，描繪「溫水基督徒」的特徵：要神的祝福卻不要神自己、信仰只是生活的一部分。他呼籲以「瘋狂的愛」回應神。",src:"Crazy Love（2008），第4章〈Profile of the Lukewarm〉"},
 {k:"t",w:"解經進路",s:"過去派（主要應驗在第一世紀）、歷史派（教會歷史的預告）、未來派（主要在末日）、理想派（善惡爭戰的象徵）。許多學者採用綜合的讀法。"},
 {k:"t",w:"千禧年觀",s:"前千禧（基督在千禧年之前再來；含時代論的災前被提）、無千禧（千禧年象徵現今教會時代，奧古斯丁以來的主流）、後千禧（福音廣傳之後基督再來）。"},
 {k:"p",w:"lewis",s:"論審判與地獄，路易斯說「地獄的門是從裡面鎖上的」：地獄是神尊重人最終拒絕祂的選擇。",src:"The Problem of Pain，第8章〈Hell〉；另見 The Great Divorce"}]},
 
-{id:"newcreation",e:13,t:"新天新地",en:"New Heaven & New Earth",d:"（末世盼望）",y:100,r:"REV 21:1-4;REV 22:1-2",rd:"REV 21",p:"神與祂的子民",bg:"從創世記的園子開始，結束在啟示錄的城。",c:"「我將一切都更新了」。",f:"神的帳幕在人間，不再有眼淚、死亡；生命樹再現。聖經的故事走完一圈：從伊甸到新耶路撒冷。",l:["revelation","creation","eden","temple-built"],th:["temple","kingdom","redemption"],
+{id:"rev-churches",e:13,t:"給七教會的信",en:"Letters to the Seven Churches",d:"約後95–96",y:95.1,r:"REV 2:4-5;REV 2:13;REV 3:15-16;REV 3:20-21",rd:"REV 2",p:"升天的主、七個教會",bg:"以弗所、士每拿、別迦摩、推雅推喇、撒狄、非拉鐵非、老底嘉，位在羅馬亞西亞省一條環狀的交通與郵遞路線上，是文化、政治與宗教的交匯點。",c:"教會內有妥協（偶像、淫亂、冷淡），外有逼迫；皇帝崇拜要求人公開宣告「凱撒是主」。",f:"每封信都以給「得勝者」的應許作結；主也警告會挪去不悔改教會的燈台。全書的關鍵字「得勝」從這裡開始。",l:["revelation","rev-throne"],th:["kingdom"],v:[]},
+
+{id:"rev-throne",e:13,t:"天上的寶座與羔羊",en:"The Throne & the Lamb",d:"（天上的景象）",y:95.2,r:"REV 4:2-3;REV 4:11;REV 5:5-6;REV 5:9",rd:"REV 4",p:"坐寶座的、羔羊、二十四位長老",bg:"地上的教會正受壓迫，看起來局勢由羅馬掌控。",c:"天上開了門，約翰被召上去看「以後必成的事」。",f:"神仍在寶座上掌權；只有被殺的羔羊配揭開書卷，啟動結束歷史的程序。地上的災難都在寶座的許可之下進行。",l:["rev-churches","rev-tribulation","passover"],th:["kingdom","messiah","temple"],v:[]},
+
+{id:"rev-tribulation",e:13,t:"大患難：七印、七號、七碗",en:"The Great Tribulation",d:"（末世・三年半）",y:96,r:"REV 6:1-2;REV 7:9;REV 7:14;REV 13:16-17;REV 14:12",rd:"REV 6",p:"四騎士、兩個見證人、龍、海中獸、地中獸",bg:"羔羊揭開七印，災難一層層臨到全地。",c:"撒但被趕出天庭，轉而在地上逼迫聖徒，藉敵基督與假先知掌控世界（12–13章）。",f:"三組災難之間穿插「插曲」，描寫信徒在這段時期的處境：受印記保護、作見證、殉道。最後一碗倒下時，世界走到審判的門口。",l:["rev-throne","rev-babylon","plagues","son-of-man"],th:["kingdom","redemption"],v:[]},
+
+{id:"rev-babylon",e:13,t:"大巴比倫傾倒",en:"Fall of Babylon",d:"（末世）",y:97,r:"REV 17:5;REV 18:2;REV 18:4;REV 19:1",rd:"REV 18",p:"大淫婦巴比倫、地上的商人",bg:"從巴別塔開始，巴比倫在聖經裡就代表人的驕傲、野心與自高。",c:"末日的巴比倫富足奢華、拜金逐利，並且喝醉了聖徒的血。",f:"天上宣告「巴比倫大城傾倒了」，地上的商人與君王哀哭，天上的群眾唱哈利路亞。淫婦（巴比倫）與新婦（新耶路撒冷）兩座城的對比，貫穿啟示錄後半。",l:["babel","babylon-fall","rev-tribulation","rev-return"],th:["nations","exile"],v:[]},
+
+{id:"rev-return",e:13,t:"基督再來與哈米吉多頓",en:"The Return of Christ",d:"（未來）",y:98,r:"REV 19:11-13;REV 19:16;REV 19:20;REV 16:16",rd:"REV 19",p:"騎白馬的「神之道」、獸與假先知",bg:"列國在哈米吉多頓（米吉多）集結，要與神爭戰。",c:"天開了，騎白馬的那位帶著天上的眾軍降臨。",f:"獸和假先知被活活扔進火湖；這是四個仇敵中最先被處理的兩個。接下來是捆綁撒但。",l:["ascension","triumphal-entry","rev-babylon","rev-millennium"],th:["kingdom","messiah"],v:[]},
+
+{id:"rev-millennium",e:13,t:"千禧年與第一次復活",en:"The Millennium",d:"（未來・一千年）",y:98.5,r:"REV 20:2-3;REV 20:4-6",rd:"REV 20",p:"得勝的聖徒、殉道者",bg:"撒但被捆綁、關進無底坑一千年，不再迷惑列國。",c:"拒絕拜獸、沒有受印記的人復活，與基督一同作王。",f:"殉道者的處境完全翻轉：曾被羅馬處死的人，如今與基督一同掌權。千年結束後撒但被釋放，最後一次叛亂被天火吞滅。",l:["rev-return","rev-white-throne","davidic-cov"],th:["kingdom","messiah"],v:[]},
+
+{id:"rev-white-throne",e:13,t:"白色大寶座的審判",en:"The Great White Throne",d:"（未來）",y:99,r:"REV 20:10;REV 20:11-12;REV 20:15",rd:"REV 20",p:"坐在白色大寶座上的、所有死了的人",bg:"千禧年結束，撒但被釋放，又煽動列國圍攻聖城，被天上降下的火燒滅。",c:"撒但被扔進火湖；其餘的死人都復活，站在寶座前。",f:"案卷展開，各人照所行的受審判；名字沒有記在生命冊上的被扔進火湖。死亡和陰間也被扔進火湖，為新天新地清出地方。",l:["rev-millennium","newcreation"],th:["redemption","kingdom"],v:[]},
+
+{id:"newcreation",e:13,t:"新天新地",en:"New Heaven & New Earth",d:"（末世盼望）",y:100,r:"REV 21:1-4;REV 22:1-2",rd:"REV 21",p:"神與祂的子民",bg:"從創世記的園子開始，結束在啟示錄的城。",c:"「我將一切都更新了」。",f:"神的帳幕在人間，不再有眼淚、死亡；生命樹再現。聖經的故事走完一圈：從伊甸到新耶路撒冷。",l:["rev-white-throne","revelation","creation","eden","temple-built"],th:["temple","kingdom","redemption"],
 v:[{k:"p",w:"keller",s:"凱勒強調基督教的盼望不是靈魂飛到天上，而是天降到地上、物質世界被更新，所以今天的工作、公義、文化都有意義。",src:"Making Sense of God（2016）；Every Good Endeavor（2012）"},
 {k:"t",w:"消滅更新說",s:"舊天地被火銷化，神另造全新的天地（彼後3:10）。"},
 {k:"t",w:"更新轉化說",s:"受造界被潔淨、轉化，延續而不是被取代（羅8:21）。"}]}

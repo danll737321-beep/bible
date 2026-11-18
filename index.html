@@ -226,6 +226,7 @@ dialog[open]{display:flex}
 <script src="data/events-ot.js"></script>
 <script src="data/events-nt.js"></script>
 <script src="data/pawson.js"></script>
+<script src="data/pawson-zonglan.js"></script>
 <script src="data/pawson-framework.js"></script>
 <script>
 {
@@ -233,9 +234,12 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ERAS=window.ERAS,EV=window.EVENTS,TH=window.THEMES,BOOK={};
 window.BOOKS.forEach((b,i)=>BOOK[b[0]]={zh:b[1],en:b[2],n:b[3],i});
-EV.forEach(e=>{e.v=(e.v||[]).filter(v=>v.k==="p");const pw=(window.PAWSON||{})[e.id];if(pw){e.v.unshift({k:"p",w:"pawson",s:pw.s,src:pw.src,tg:pw.tg});(e.th=e.th||[]).push("pawson")}});
+const ZLL=window.ZL_LECTURES||{},ZLV=window.ZL_VIEWS||{},ZLE=window.ZL_ERA||{};
+EV.forEach(e=>{e.v=(e.v||[]).filter(v=>v.k==="p");const z=ZLV[e.id],pw=z||(window.PAWSON||{})[e.id];if(pw){e.v.unshift({k:"p",w:"pawson",s:pw.s,src:z?z.lec.map(k=>ZLL[k].n).join("；"):pw.src,lec:z&&z.lec,tg:pw.tg||((window.PAWSON||{})[e.id]||{}).tg});(e.th=e.th||[]).push("pawson")}});
+const lecLinks=ks=>ks.map(k=>ZLL[k]?`<a class="lnk" href="${ZLL[k].u}" target="_blank" rel="noopener">${esc(ZLL[k].n)} ↗</a>`:"").join("　");
 const PE=window.PAWSON_ERAS||[];
 const byId={};EV.forEach(e=>byId[e.id]=e);
+(window.ZL_TY||[]).forEach(t=>{const f=EV.find(e=>e.id===t.from);if(f)(f.ty=f.ty||[]).push({to:t.to,n:t.n})});
 const back={};EV.forEach(e=>(e.ty||[]).forEach(t=>(back[t.to]=back[t.to]||[]).push({from:e.id,n:t.n})));
 const S={era:null,theme:null,q:"",sel:null,lang:"both",notes:[],pastors:window.DEFAULT_PASTORS.slice(),store:"local",editing:null};
 try{S.lang=localStorage.getItem("bt-lang")||"both"}catch(e){}
@@ -317,6 +321,7 @@ function renderList(){
   ERAS.forEach((r,i)=>{
     const es=EV.filter(e=>e.e===i&&match(e));if(!es.length)return;any=true;
     h+=`<div class="ehead" id="era-${i}" style="border-color:${r.c}"><h2 style="color:${r.c}">${esc(r.n)}</h2><span>${esc(r.en)} · ${esc(r.d)} · ${esc(r.b)}</span></div>`;
+    if(ZLE[i])h+=`<details class="pwera" open><summary><b>鮑森導讀</b><span>新舊約縱覽</span></summary><p>${esc(ZLE[i].s)}</p><div class="src">${lecLinks(ZLE[i].lec)}<br>轉述摘要，非原文引用。</div></details>`;
     if(PE[i])h+=`<details class="pwera"><summary><b>鮑森導讀</b><span>${esc(PE[i].v)} ${esc(PE[i].ch)}</span></summary><p>${esc(PE[i].s)}</p><div class="src">轉述摘要，非原文引用。</div></details>`;
     h+=es.map(e=>{const tyc=(e.ty||[]).length+(back[e.id]||[]).length;
       return`<button class="ev${S.sel===e.id?" sel":""}" style="--ec:${r.c}" data-ev="${e.id}"><div class="dt">${esc(e.d)}</div><div><div class="tt">${esc(e.t)}</div><div class="en">${esc(e.en)}${e.r?" · "+esc(refLabel(parseRef(e.r.split(";")[0]),"zh")):""}</div><div class="meta">${(e.v||[]).length?`<span class="tag">牧者觀點 ${e.v.length}</span>`:""}${tyc?`<span class="tag gold">預表／應驗 ${tyc}</span>`:""}</div></div></button>`}).join("");
@@ -347,7 +352,7 @@ function renderPanel(){
   ${(e.l||[]).length?`<div class="sec"><h3>相關事件<small>順著因果鏈讀下去</small></h3><div class="rel">${e.l.map(id=>byId[id]?`<button class="chip" data-ev="${id}"><span class="dot" style="background:${ERAS[byId[id].e].c}"></span>${esc(byId[id].t)}</button>`:"").join("")}</div></div>`:""}
   ${tys.length?`<div class="sec"><h3>預表與應驗<small>舊約 ↔ 新約</small></h3><div class="ty">${tys.map(t=>byId[t.id]?`<button data-ev="${t.id}"><span class="arr">${t.dir}</span><div><b>${esc(byId[t.id].t)}（${esc(ERAS[byId[t.id].e].n)}）</b><span>${esc(t.n)}</span></div></button>`:"").join("")}</div></div>`:""}
   <div class="sec"><h3>牧者觀點<small>你喜歡的牧者怎麼解讀這段經文</small></h3>
-  ${views.length?views.map(v=>{const isP=v.k==="p",pp=isP?pastor(v.w):null;return`<div class="view${v.w==="pawson"?" pw":""}"><div class="who"><b>${esc(isP?pp.n+" "+pp.en:v.w)}</b><span class="kind k-${v.k}">${v.w==="pawson"?"主軸・轉述":isP?"牧者・轉述":v.k==="a"?"學術討論":"神學傳統"}</span>${v.tg?`<span class="kind k-a">${esc(v.tg)}</span>`:""}</div><p>${esc(v.s)}</p>${v.src?`<div class="src">出處：${esc(v.src)}。內容為轉述摘要，非原文引用，請以原書核對。</div>`:""}</div>`}).join(""):`<p class="stat">這個事件還沒有收錄牧者觀點。</p>`}
+  ${views.length?views.map(v=>{const isP=v.k==="p",pp=isP?pastor(v.w):null;return`<div class="view${v.w==="pawson"?" pw":""}"><div class="who"><b>${esc(isP?pp.n+" "+pp.en:v.w)}</b><span class="kind k-${v.k}">${v.w==="pawson"?"主軸・轉述":isP?"牧者・轉述":v.k==="a"?"學術討論":"神學傳統"}</span>${v.tg?`<span class="kind k-a">${esc(v.tg)}</span>`:""}</div><p>${esc(v.s)}</p>${v.lec?`<div class="src">出處：${lecLinks(v.lec)}<br>內容為轉述摘要，非原文引用，請以原講核對。</div>`:v.src?`<div class="src">出處：${esc(v.src)}。內容為轉述摘要，非原文引用，請以原書核對。</div>`:""}</div>`}).join(""):`<p class="stat">這個事件還沒有收錄牧者觀點。</p>`}
   </div>
   </div><div class="pnav"><button class="btn" id="pPrev">← 上一個事件</button><button class="btn" id="pNext">下一個事件 →</button></div>`;
   refs.forEach((x,i)=>versesHtml(x,S.lang).then(h=>{if(tok===panelToken){const el=$("#vs"+i);if(el)el.innerHTML=h}}));
