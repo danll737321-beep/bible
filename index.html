@@ -73,6 +73,7 @@ h1 small{display:block;font:500 14px/1.4 "Noto Sans TC";color:var(--mute);letter
 .pt{font-size:11px;padding:1px 6px;border-radius:999px;background:var(--gold);color:var(--bg)}
 #dPF{width:min(1040px,96vw)}
 .pfchart{overflow-x:auto}
+.geo svg{width:100%;height:auto;display:block;border-radius:8px}.geo a:focus-visible{outline:2px solid var(--acc)}.maps{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;align-items:start}.maps figure{margin:0}.maps figcaption{font-size:.85em;color:var(--mute);margin-top:4px}@media(max-width:700px){.maps{grid-template-columns:1fr}}
 .pfchart svg{min-width:700px;width:100%;height:auto;display:block}
 ul.pfl{padding-left:20px;margin:6px 0}
 ul.pfl li{margin:4px 0}
@@ -446,7 +447,7 @@ function renderThemes(){
 }
 function eraGuide(i){
   const z=ZLE[i],pe=PE[i],k=KE[i];if(!z&&!pe&&!k)return"";
-  const pw=z?`<p>${esc(z.s)}</p><div class="src">${lecLinks(z.lec)}</div>`:pe?`<p>${esc(pe.s)}</p><div class="src">${esc(pe.v)} ${esc(pe.ch)}</div>`:`<p class="stat">${L("尚未收錄","Not yet added")}</p>`;
+  const pw=z?`<p>${esc(z.s)}</p>${i===2?`<div class="geo">${torahSvg()}</div>`:""}<div class="src">${lecLinks(z.lec)}</div>`:pe?`<p>${esc(pe.s)}</p><div class="src">${esc(pe.v)} ${esc(pe.ch)}</div>`:`<p class="stat">${L("尚未收錄","Not yet added")}</p>`;
   const kw=k?`${(k.tb||[]).length?`<ul class="tb">${k.tb.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:""}${k.s?`<p>${esc(k.s)}</p>`:""}<div class="src">${esc(k.src)}</div>`:`<p class="stat">${L("尚未收錄","Not yet added")}</p>`;
   return`<details class="guide"><summary><b>${L("導讀","Guide")}</b><span>${L("鮑森・歷史　凱勒・福音","Pawson: history · Keller: gospel")}</span></summary><div class="duo"><div class="ax ap"><h5>${L("鮑森","Pawson")}</h5>${pw}</div><div class="ax ak"><h5>${L("凱勒","Keller")}</h5>${kw}</div></div><div class="src">${L("轉述摘要，非原文引用。","Paraphrased summaries, not direct quotations.")}</div></details>`;
 }
@@ -589,6 +590,67 @@ function canonHtml(){
   const PT=EN?{"前":"pre-exile","中":"exile","後":"post-exile"}:{"前":"被擄前","中":"被擄期間","後":"被擄後"},PTm=window.PF_PROPHET_TIME||{};
   return window.PF_CANON[S.canon].map(gp=>`<div class="cgrp"><h4>${esc(gp.n)}${EN?"":` <small class="stat">${esc(gp.en)}</small>`}</h4>${gp.note?`<p>${esc(gp.note)}</p>`:""}<div class="rel">${gp.b.map(([c,alt])=>{const t=PTm[c];return`<button class="chip" data-read="${c} 1">${alt&&S.canon==="heb"&&(alt.includes("一卷")||alt.includes("one book"))?esc(alt):esc(bk(c).zh)+(alt&&S.canon==="heb"?` <small>${esc(alt)}</small>`:"")}${t?` <span class="pt" title="${t.includes("*")?L("年代有爭議","date disputed"):""}">${PT[t[0]]}${t.includes("*")?"?":""}</span>`:""}</button>`}).join("")}</div></div>`).join("");
 }
+/* ---------- phase 3: Torah shape + two maps (Pawson lectures 1 & 10) ---------- */
+const HALO='paint-order:stroke;stroke:var(--bg);stroke-width:3.5px;stroke-linejoin:round';
+function torahSvg(){
+  const B=[[L("創世記","Genesis"),L("全人類","All humanity"),L("全地","Whole earth"),L("地球的歷史","Earth's history"),0],
+  [L("出埃及記","Exodus"),L("以色列國","A nation"),L("埃及→西奈","Egypt→Sinai"),L("約三百年","c. 300 yrs"),2],
+  [L("利未記","Leviticus"),L("一個支派","One tribe"),L("西奈山","Mt Sinai"),L("一個月","One month"),2],
+  [L("民數記","Numbers"),L("以色列國","A nation"),L("曠野","Wilderness"),L("約四十年","c. 40 yrs"),2],
+  [L("申命記","Deuteronomy"),L("以色列→萬國","Israel→world"),L("約旦河東","East of Jordan"),L("望向後代","Looks ahead"),2]];
+  const H=[168,104,24,104,168],cy=92,X=i=>72+124*i;
+  const top=[[16,cy-H[0]/2],...H.map((h,i)=>[X(i),cy-h/2]),[624,cy-H[4]/2]],bot=[...top].reverse().map(([x,y])=>[x,2*cy-y]);
+  let g=`<polygon points="${top.concat(bot).map(p=>p.join(",")).join(" ")}" fill="var(--gold)" fill-opacity=".14" stroke="var(--gold)" stroke-width="1.5"/>`;
+  B.forEach((b,i)=>{const x=X(i);g+=`<line x1="${x}" y1="${cy-H[i]/2}" x2="${x}" y2="${cy+H[i]/2}" stroke="var(--gold)" stroke-dasharray="3 3" opacity=".6"/>
+  <a data-era="${b[4]}" role="button" tabindex="0" aria-label="${esc(b[0])}"><text x="${x}" y="200" text-anchor="middle" font-size="14" font-weight="700" fill="var(--ink)" style="cursor:pointer">${esc(b[0])}</text></a>
+  <text x="${x}" y="218" text-anchor="middle" font-size="11.5" fill="var(--ink)">${esc(b[1])}</text>
+  <text x="${x}" y="234" text-anchor="middle" font-size="11.5" fill="var(--mute)">${esc(b[2])}</text>
+  <text x="${x}" y="250" text-anchor="middle" font-size="11.5" fill="var(--mute)">${esc(b[3])}</text>`});
+  g+=`<text x="${X(2)}" y="${cy-24}" text-anchor="middle" font-size="11" fill="var(--gold)">${L("轉折點","Turning point")}</text>`;
+  return`<svg viewBox="0 0 640 262" role="img" aria-label="${L("摩西五經的扯鈴形狀","The diabolo shape of the Pentateuch")}">${g}</svg>`;
+}
+function geoPt(lo,la,a){return[(lo-a.lo0)*a.k,(a.la1-la)*a.k]}
+function geoPath(pts,a,close){return"M"+pts.map(([lo,la])=>geoPt(lo,la,a).map(v=>v.toFixed(1)).join(",")).join(" L")+(close?" Z":"")}
+function geoPlace(p,a){const[x,y]=geoPt(p[1],p[2],a),dx=p[4]||6,anc=dx<0?"end":"start",lbl=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${p[3]?4.5:3}" fill="${p[3]?"var(--acc)":"var(--ink)"}"/><text x="${(x+dx).toFixed(1)}" y="${(y+4).toFixed(1)}" text-anchor="${anc}" font-size="12" fill="var(--ink)" style="${HALO}">${esc(p[0])}</text>`;
+  return p[3]?`<a data-ev="${p[3]}" role="button" tabindex="0" aria-label="${esc(p[0])}" style="cursor:pointer">${lbl}</a>`:lbl}
+function mapCrescent(){
+  const a={lo0:29,la1:38.5,k:24},VW=20*24,VH=11*24;
+  const sea=[[24,31.6],[29,30.9],[31,31.55],[32.3,31.2],[34.2,31.3],[34.6,31.9],[35,32.8],[35.5,33.9],[35.9,35],[36.1,35.8],[36.2,36.6],[35,36.6],[34,36.2],[32.5,36.1],[30,36.3],[28,36.7],[26.5,38],[26,38.5],[24,38.5]];
+  const red=[[32.55,29.95],[33.4,28.4],[34.3,27.9],[34.45,29.5],[34.9,29.5],[34.8,27.9],[35.9,26],[37.2,24],[35.5,24],[34,26.3],[33.2,27.6]];
+  const gulf=[[47.9,30],[48.6,29.9],[50.3,29.3],[51,27.5],[51,24],[50,24.6],[49.5,26.7],[48.6,27.8],[47.9,29.4]];
+  const nile=[[32.9,24],[32.7,26.1],[31.3,27.9],[31,29.2],[31.2,30.1],[30.9,31.45]],nile2=[[31.2,30.1],[31.8,31.4]];
+  const eup=[[38.6,38.5],[38.3,37.1],[39.2,36],[40.1,35.3],[41.5,34.4],[43.3,33.4],[44.4,32.5],[45.6,31.3],[47,30.6],[48,30]];
+  const tig=[[39.6,38.5],[41.4,37.4],[43.1,36.4],[43.6,35],[44.4,33.3],[45.8,32.2],[47,31.1],[47.6,30.4]];
+  const cres=[[30.9,26.5],[31.1,30.3],[33.6,31.4],[35.1,32.6],[36.3,34.4],[37.8,36.4],[39.6,36.9],[42,36.6],[43.6,35.4],[44.6,33.2],[46.3,31.3],[47.6,30.4]];
+  const road=[[31.25,29.9],[32.3,30.9],[34.45,31.5],[34.9,32.2],[35.18,32.58],[35.55,33],[36.29,33.51],[37.2,35.2],[39.03,36.86],[43.15,36.36]];
+  const P=[[L("吾珥","Ur"),46.1,30.96,"abram-call",-7],[L("哈蘭","Haran"),39.03,36.86,"abram-call"],[L("巴比倫","Babylon"),44.42,32.54,"babylon-fall",-7],[L("尼尼微","Nineveh"),43.15,36.36,"jonah"],[L("大馬士革","Damascus"),36.29,33.51,"paul-conversion"],[L("米吉多","Megiddo"),35.18,32.58,"josiah",-7],[L("耶路撒冷","Jerusalem"),35.21,31.77,"temple-built"],[L("孟斐斯","Memphis"),31.25,29.85,"slavery",-7]];
+  let g=`<rect width="${VW}" height="${VH}" fill="var(--panel)"/>
+  <path d="${geoPath(sea,a,1)}" fill="#7aa7c7" fill-opacity=".35"/><path d="${geoPath(red,a,1)}" fill="#7aa7c7" fill-opacity=".35"/><path d="${geoPath(gulf,a,1)}" fill="#7aa7c7" fill-opacity=".35"/>
+  <path d="${geoPath(cres,a)}" fill="none" stroke="var(--gold)" stroke-opacity=".28" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="${geoPath(nile,a)}" fill="none" stroke="#3d7ea6" stroke-width="2"/><path d="${geoPath(nile2,a)}" fill="none" stroke="#3d7ea6" stroke-width="1.5"/>
+  <path d="${geoPath(eup,a)}" fill="none" stroke="#3d7ea6" stroke-width="2"/><path d="${geoPath(tig,a)}" fill="none" stroke="#3d7ea6" stroke-width="2"/>
+  <path d="${geoPath(road,a)}" fill="none" stroke="var(--acc)" stroke-width="1.6" stroke-dasharray="5 4"/>`;
+  const T=(lo,la,t,o={})=>{const[x,y]=geoPt(lo,la,a);return`<text x="${x.toFixed(0)}" y="${y.toFixed(0)}" text-anchor="middle" font-size="${o.fs||12}" fill="${o.c||"var(--mute)"}" ${o.it?'font-style="italic"':""} style="${HALO}">${t}</text>`};
+  g+=T(31.2,34.4,L("地中海","Mediterranean"),{it:1})+T(39.5,30.2,L("阿拉伯沙漠","Arabian Desert"),{fs:13})+T(30.2,28.0,L("撒哈拉","Sahara"),{fs:13})+T(37.6,32.4,L("玄武岩地帶","Basalt"),{fs:11})+T(44.8,34.7,L("美索不達米亞","Mesopotamia"),{c:"var(--gold)"})+T(45.2,37.3,L("亞述","Assyria"),{c:"var(--ink)",fs:13})+T(43.4,31.2,L("巴比倫尼亞","Babylonia"),{c:"var(--ink)",fs:13})+T(29.9,29.2,L("埃及","Egypt"),{c:"var(--ink)",fs:13})+T(32.3,28.3,L("尼羅河","Nile"),{c:"#3d7ea6",fs:11})+T(41.1,33.5,L("幼發拉底河","Euphrates"),{c:"#3d7ea6",fs:11})+T(42.6,37.2,L("底格里斯河","Tigris"),{c:"#3d7ea6",fs:11})+T(33.2,33.2,L("沿海大道","Coastal road"),{c:"var(--acc)",fs:11});
+  g+=P.map(p=>geoPlace(p,a)).join("");
+  return`<svg viewBox="0 0 ${VW} ${VH}" role="img" aria-label="${L("肥沃月灣示意圖","Fertile Crescent sketch map")}">${g}</svg>`;
+}
+function mapLand(){
+  const a={lo0:34.15,la1:33.45,k:170},W=(36.25-34.15)*170,Hh=(33.45-30.95)*170;
+  const sea=[[34.15,30.95],[34.15,33.45],[35.12,33.45],[35.1,33.1],[35.07,32.9],[34.95,32.83],[34.9,32.5],[34.75,32.05],[34.47,31.55],[34.25,31.25],[34.2,30.95]];
+  const gal=[[35.52,32.88],[35.57,32.9],[35.64,32.85],[35.65,32.78],[35.62,32.71],[35.57,32.71],[35.53,32.78]];
+  const dead=[[35.47,31.77],[35.56,31.77],[35.6,31.5],[35.55,31.1],[35.42,31.05],[35.39,31.3],[35.42,31.55]];
+  const jor=[[35.62,33.3],[35.62,33.05],[35.6,32.9]],jor2=[[35.57,32.71],[35.58,32.5],[35.56,32.2],[35.55,31.95],[35.55,31.77]];
+  const rift=[[35.55,33.3],[35.53,32.6],[35.5,31.9],[35.4,31.05]];
+  const P=[[L("黑門山","Mt Hermon"),35.82,33.36,"",-7],[L("迦百農","Capernaum"),35.57,32.88,"first-disciples",-7],[L("拿撒勒","Nazareth"),35.3,32.7,"annunciation"],[L("米吉多","Megiddo"),35.18,32.58,"josiah",-7],[L("迦密山","Mt Carmel"),35.02,32.73,"elijah-carmel",-7],[L("撒瑪利亞","Samaria"),35.19,32.28,"samaria-fall"],[L("耶利哥","Jericho"),35.44,31.86,"jericho"],[L("耶路撒冷","Jerusalem"),35.21,31.77,"temple-built",-7],[L("伯利恆","Bethlehem"),35.2,31.7,"nativity",-7],[L("希伯崙","Hebron"),35.1,31.53,"david-king",-7],[L("別是巴","Beersheba"),34.79,31.25,"",-7],[L("迦薩","Gaza"),34.45,31.5,"",6]];
+  let g=`<rect width="${W}" height="${Hh}" fill="var(--panel)"/><path d="${geoPath(rift,a)}" fill="none" stroke="var(--mute)" stroke-opacity=".18" stroke-width="26" stroke-linecap="round"/>
+  <path d="${geoPath(sea,a,1)}" fill="#7aa7c7" fill-opacity=".35"/><path d="${geoPath(gal,a,1)}" fill="#7aa7c7" fill-opacity=".6"/><path d="${geoPath(dead,a,1)}" fill="#7aa7c7" fill-opacity=".6"/>
+  <path d="${geoPath(jor,a)}" fill="none" stroke="#3d7ea6" stroke-width="1.6"/><path d="${geoPath(jor2,a)}" fill="none" stroke="#3d7ea6" stroke-width="1.6"/>`;
+  const T=(lo,la,t,o={})=>{const[x,y]=geoPt(lo,la,a);return`<text x="${x.toFixed(0)}" y="${y.toFixed(0)}" text-anchor="${o.an||"middle"}" font-size="${o.fs||12}" fill="${o.c||"var(--mute)"}" ${o.it?'font-style="italic"':""} style="${HALO}">${t}</text>`};
+  g+=T(34.45,32.6,L("地中海","Mediterranean"),{it:1})+T(35.42,33.07,L("加利利","Galilee"),{c:"var(--ink)",fs:14})+T(35.3,32.45,L("耶斯列平原","Jezreel Valley"),{fs:10.5})+T(35.25,32.12,L("撒瑪利亞地","Samaria"),{c:"var(--ink)",fs:13})+T(35.0,31.38,L("猶大地","Judah"),{c:"var(--ink)",fs:14})+T(35.97,31.4,L("死海","Dead Sea"),{c:"#3d7ea6",fs:11})+T(35.97,31.32,L("海拔 −430 m","−430 m"),{fs:10})+T(35.73,32.55,L("約旦河","Jordan"),{c:"#3d7ea6",fs:11,an:"start"})+T(35.92,32.1,L("大裂谷","Rift valley"),{fs:10.5});
+  g+=P.map(p=>p[3]?geoPlace(p,a):geoPlace([p[0],p[1],p[2],"",p[4]],a)).join("");
+  return`<svg viewBox="0 0 ${W.toFixed(0)} ${Hh.toFixed(0)}" role="img" aria-label="${L("應許之地示意圖","Promised land sketch map")}">${g}</svg>`;
+}
 function renderPFDialog(){
   const rows=PF.filter(p=>p.k==="p").map(p=>`<tr><td><span class="sw" style="background:${p.c}"></span><b>${esc(p.n)}</b><br><small class="stat">${esc(p.sub)}</small></td><td>${esc(p.ev)}</td><td>${esc(p.who)}</td><td>${esc(p.lead)}${p.leadW?`<br><small class="stat">${esc(p.leadW)}</small>`:""}</td><td>${(p.books||[]).map(b=>esc(b[1])).join("、")}</td></tr>`).join("");
   $("#pfBody").innerHTML=`<p class="stat">${L("鮑森把以色列的歷史分成四段、每段約五百年，用一個事件和一位人物標記；再插進兩段各四百年、神沉默的空檔。年份是方便記憶的整數；下方事件列表仍用較精確的年代。","Pawson divides Israel's history into four periods of about five hundred years, each marked by an event and a person, with two gaps of four hundred years when God was silent. The years are round numbers for memory; the event list keeps more precise dates.")}</p>
@@ -599,7 +661,8 @@ function renderPFDialog(){
   <p class="stat">${EN?(S.canon==="heb"?"On the Emmaus road Jesus explained the Law, the Prophets and the Writings (Luke 24:27, 44). Pawson preferred this division because it reminds us this is prophetic history, not ordinary history.":"English Bibles put all the history books first, then poetry, then prophets. Pawson thought this order makes us read the Old Testament very differently from the Jews.")+" Gold tags show whether a prophet wrote before, during or after the exile; \"?\" means the date is disputed.":(S.canon==="heb"?"耶穌在以馬忤斯路上就是按律法、先知、聖卷來講解（路24:27,44）。鮑森認為這樣分比較好，因為它提醒我們：這不是一般歷史，而是先知歷史。":"中英文聖經把歷史書全放在前面，再來是詩歌書和先知書。鮑森認為這種排法讓我們看舊約的方式和猶太人很不一樣。")+"金色標籤＝先知書寫於被擄前、期間或之後；「?」表示年代有爭議。"}</p>
   <div id="canonBody">${canonHtml()}</div></div>
   <div class="sec"><h3>${L("讀經原則","Principles for reading")}<small>${L("第01講，轉述","Lecture 1, paraphrased")}</small></h3><ul class="pfl">${window.PF_PRINCIPLES.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
-  <div class="sec"><h3>${L("地理：兩張地圖","Geography: two maps")}<small>${L("第01講，轉述","Lecture 1, paraphrased")}</small></h3><ul class="pfl">${window.PF_GEO.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
+  <div class="sec"><h3>${L("摩西五經的形狀：扯鈴","The shape of the Pentateuch: a diabolo")}<small>${L("第01、10講","Lectures 1, 10")}</small></h3><div class="geo">${torahSvg()}</div><p class="stat">${L("鮑森說五經像扯鈴：兩頭寬、中間窄。焦點從全人類收到一個國家，再收到一個支派、一個地點、一個月（利未記），然後放寬回國家，申命記再望向萬國。利未記是轉折點；很多人讀不下去，是因為對一個支派沒興趣。點書名可跳到該時代。","Pawson said the Pentateuch is shaped like a diabolo: wide at both ends, narrow in the middle. The focus narrows from all humanity to one nation, then to one tribe, one place and one month (Leviticus), widens back to the nation, and Deuteronomy looks out to the world again. Leviticus is the turning point; many people cannot get through it because they are not interested in one tribe. Tap a book name to jump to its era.")}</p></div>
+  <div class="sec"><h3>${L("地理：兩張地圖","Geography: two maps")}<small>${L("第01講，轉述；示意圖，非精確比例","Lecture 1, paraphrased; sketch maps, not to scale")}</small></h3><div class="maps"><figure class="geo">${mapCrescent()}<figcaption>${L("肥沃月灣：兩端的強權夾著一條狹窄走廊（紅色虛線為沿海大道）。點紅點看相關事件。","The Fertile Crescent: great powers at either end, a narrow corridor between (red dashes: the coastal road). Tap a red dot for the related event.")}</figcaption></figure><figure class="geo">${mapLand()}<figcaption>${L("應許之地：北邊加利利在十字路口上，南邊猶大山地與世隔絕；大裂谷從黑門山一路下到死海。","The promised land: Galilee in the north sits on the crossroads, the Judean hills in the south are cut off; the rift valley runs from Mt Hermon down to the Dead Sea.")}</figcaption></figure></div><ul class="pfl">${window.PF_GEO.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
   <div class="sec"><p class="stat">${L("出處：","Source: ")}<a class="lnk" href="${window.PF_SRC.u}" target="_blank" rel="noopener">${esc(window.PF_SRC.n)} ↗</a>・<a class="lnk" href="${window.PF_SRC.all}" target="_blank" rel="noopener">${L("全集列表","All lectures")} ↗</a></p></div>`;
 }
 function openPF(){$("#dPF").showModal();renderPFDialog();renderPFBand()}
@@ -611,6 +674,7 @@ function select(id,push=true){
   if(push){const b=document.querySelector(`.ev[data-ev="${id}"]`);if(b&&window.innerWidth>900)b.scrollIntoView({block:"nearest"})}
 }
 function step(d){const vis=EV.filter(match);const i=vis.findIndex(e=>e.id===S.sel);const n=vis[i+d];if(n)select(n.id)}
+document.addEventListener("keydown",ev=>{const t=ev.target;if((ev.key==="Enter"||ev.key===" ")&&t instanceof SVGElement&&t.getAttribute("role")==="button"){ev.preventDefault();t.dispatchEvent(new MouseEvent("click",{bubbles:true}))}});
 document.addEventListener("click",async ev=>{
   const t=ev.target.closest("button,a");if(!t)return;
   if(t.dataset.ev){document.querySelectorAll("dialog[open]").forEach(d=>d.close());select(t.dataset.ev);return}
