@@ -275,6 +275,7 @@ header{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
 .ax p{margin:0 0 6px;font-size:calc(15.5px*var(--fz));line-height:1.7}
 .ax .src,.ov .src,.guide .src{font-size:12.5px;color:var(--mute)}
 .ax.empty{opacity:.6}
+.ax p.s2{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
 ul.tb{margin:0 0 8px;padding-left:18px}ul.tb li{margin:3px 0;font-size:14.5px}
 .guide{margin:10px 0 6px;border-bottom:1px solid var(--line);padding-bottom:6px}
 .guide summary{cursor:pointer;display:flex;gap:10px;align-items:baseline;min-height:36px}
@@ -350,7 +351,7 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const ERAS=window.ERAS,EV=window.EVENTS,TH=window.THEMES,BOOK={};
 window.BOOKS.forEach((b,i)=>BOOK[b[0]]={zh:b[1],en:b[2],n:b[3],i});
 const ZLL=window.ZL_LECTURES||{},ZLV=window.ZL_VIEWS||{},ZLE=window.ZL_ERA||{};
-EV.forEach(e=>{e.v=(e.v||[]).filter(v=>v.k==="p");const z=ZLV[e.id],pw=z||(window.PAWSON||{})[e.id];if(pw){e.v.unshift({k:"p",w:"pawson",s:pw.s,src:z?z.lec.map(k=>ZLL[k].n).join("；"):pw.src,lec:z&&z.lec,tg:pw.tg||((window.PAWSON||{})[e.id]||{}).tg});(e.th=e.th||[]).push("pawson")}});
+EV.forEach(e=>{e.v=(e.v||[]).filter(v=>v.k==="p");const z=ZLV[e.id],pw=z||(window.PAWSON||{})[e.id];if(pw){const old=z&&(window.PAWSON||{})[e.id];e.v.unshift({k:"p",w:"pawson",s:pw.s,src:z?z.lec.map(k=>ZLL[k].n).join("；"):pw.src,lec:z&&z.lec,tg:pw.tg||((window.PAWSON||{})[e.id]||{}).tg,s2:old&&old.s,src2:old&&old.src});(e.th=e.th||[]).push("pawson")}});
 /* 主軸整理：鮑森、凱勒；其他牧者另放 */
 const mute=h=>{const n=parseInt(h.slice(1),16),m=[n>>16&255,n>>8&255,n&255],g=[138,133,124];return"#"+m.map((v,i)=>Math.round(v*.72+g[i]*.28).toString(16).padStart(2,"0")).join("")};
 ERAS.forEach(r=>r.c=mute(r.c));(window.PF_PERIODS||[]).forEach(p=>{if(p.c)p.c=mute(p.c)});
@@ -468,7 +469,7 @@ let panelToken=0;
 function axCard(v,cls,n,en){
   if(!v)return`<div class="ax ${cls} empty"><h5>${n}<small>${en}</small></h5><p class="stat">—</p></div>`;
   const src=v.lec?`<div class="src">${lecLinks(v.lec)}</div>`:v.src?`<div class="src">${esc(v.src)}</div>`:"";
-  return`<div class="ax ${cls}"><h5>${n}<small>${en}</small>${v.tg?`<em>${esc(v.tg)}</em>`:""}</h5><p>${esc(v.s)}</p>${src}</div>`;
+  return`<div class="ax ${cls}"><h5>${n}<small>${en}</small>${v.tg?`<em>${esc(v.tg)}</em>`:""}</h5><p>${esc(v.s)}</p>${src}${v.s2?`<p class="s2">${esc(v.s2)}</p><div class="src">${esc(v.src2||"")}</div>`:""}</div>`;
 }
 function audioSec(list){
   if(!list||!list.length)return"";const A=window.KELLER_AUDIO_SRC;
