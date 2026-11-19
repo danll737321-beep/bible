@@ -4,7 +4,7 @@
   window.UI_EN=en;if(!en)return;
   const W=window;document.documentElement.lang="en";
   const srcEN=s=>{if(!s)return s;let r=String(s);(W.EN_SRCMAP||[]).forEach(([a,b])=>{r=r.split(a).join(b)});
-    return r.replace(/第(\d+)章/g,"ch. $1").replace(/第(\d+)–(\d+)講/g,"Lectures $1–$2").replace(/第(\d+)講/g,"Lecture $1").replace(/〈/g," \"").replace(/〉/g,"\"").replace(/（/g," (").replace(/）/g,")").replace(/，/g,", ").replace(/；/g,"; ").replace(/、/g,", ").replace(/：/g,": ").replace(/\s+/g," ").replace(/\( /g,"(").replace(/ ,/g,",").trim()};
+    return r.replace(/第(\d+)章/g,"ch. $1").replace(/第(\d+)–(\d+)講/g,"Lectures $1–$2").replace(/第(\d+)講/g,"Lecture $1").replace(/《/g," ").replace(/》/g,"").replace(/〈/g," \"").replace(/〉/g,"\"").replace(/（/g," (").replace(/）/g,")").replace(/，/g,", ").replace(/；/g,"; ").replace(/、/g,", ").replace(/：/g,": ").replace(/\s+/g," ").replace(/\( /g,"(").replace(/ ,/g,",").trim()};
   W.srcEN=srcEN;
   const tg=t=>t&&(W.EN_TG[t]||t);
   W.BOOKS.forEach(b=>{b[1]=b[2]});

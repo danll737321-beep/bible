@@ -17,7 +17,7 @@ window.ISSUES=[
 
 {id:"spirit",n:"聖靈的洗與恩賜",q:"受聖靈是信主時自動發生，還是可以分開的經歷？神蹟性的恩賜今天還有嗎？",
  p:{s:"受聖靈是一個可以清楚經歷的事件，不一定在信主那一刻自動發生（徒8、19）；聖靈的恩賜今天仍在教會中運行。",src:"The Normal Christian Birth（1989）；Jesus Baptises in One Holy Spirit（1997）"},
- k:{s:"每個基督徒都有聖靈所賜的一組恩賜，用來服事人；但恩賜不能取代果子，人可能靠恩賜影響別人，屬靈生命卻在衰退。關於「聖靈的洗」是否為第二次經歷，本站尚未找到他的直接論述。",src:"〈Discerning and Exercising Spiritual Gifts〉（Redeemer City to City）"},
+ k:{s:"每個基督徒都有聖靈所賜的一組恩賜，用來服事人；但恩賜不能取代果子，人可能靠恩賜影響別人，屬靈生命卻在衰退。他在《認識聖靈》系列中提醒，有的教會只重聖靈、有的只重教義，兩邊都要平衡；並指出被聖靈充滿的三個記號：心裡讚美、凡事謝恩而知足、因敬畏基督而彼此順服（對應弗5:18-21）。關於「聖靈的洗」是否為第二次經歷，本站尚未找到他的直接論述。",src:"〈Discerning and Exercising Spiritual Gifts〉（Redeemer City to City）；講道系列《認識聖靈》（生命中的福音）"},
  o:[{w:"chan",s:"認為今天的教會忽略了聖靈，信仰變成靠人力運作。",src:"Forgotten God（2009）"},
     {w:"packer",s:"對靈恩運動的活力有所肯定，也對其神學提出審慎的批評。",src:"Keep in Step with the Spirit（1984）"}],
  agree:"聖靈的工作是真實的，恩賜是為了服事。",differ:"鮑森強調受聖靈是可被經歷、可分開的事件；凱勒的重點在恩賜與品格的平衡。",

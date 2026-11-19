@@ -284,6 +284,7 @@ ul.tb{margin:0 0 8px;padding-left:18px}ul.tb li{margin:3px 0;font-size:14.5px}
 .kick{font-weight:600}
 .others{margin-top:22px;border-top:1px solid var(--line);padding-top:10px}
 .others summary{cursor:pointer;color:var(--mute);font-size:14px;min-height:36px;display:flex;align-items:center}
+.aud .src{font-size:12.5px;color:var(--mute)}.aud ul{margin:4px 0}
 .ov{padding:8px 0;border-bottom:1px solid var(--line)}.ov b{font-size:14px}.ov p{margin:2px 0;font-size:15px}
 .iss{border-bottom:1px solid var(--line);padding:6px 0 12px}
 .iss summary{cursor:pointer;display:grid;gap:2px;padding:8px 0;min-height:44px}
@@ -334,6 +335,7 @@ ul.tb{margin:0 0 8px;padding-left:18px}ul.tb li{margin:3px 0;font-size:14.5px}
 <script src="data/pawson-framework.js"></script>
 <script src="data/keller.js"></script>
 <script src="data/issues.js"></script>
+<script src="data/keller-audio.js"></script>
 <script src="data/en/ev-ot1.js"></script>
 <script src="data/en/ev-ot2.js"></script>
 <script src="data/en/ev-nt.js"></script>
@@ -343,7 +345,7 @@ ul.tb{margin:0 0 8px;padding-left:18px}ul.tb li{margin:3px 0;font-size:14.5px}
 <script>
 {
 const $=s=>document.querySelector(s);
-const EN=!!window.UI_EN,L=(z,e)=>EN?e:z;
+const EN=!!window.UI_EN,L=(z,e)=>EN?e:z,srcEN=window.srcEN||(x=>x);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ERAS=window.ERAS,EV=window.EVENTS,TH=window.THEMES,BOOK={};
 window.BOOKS.forEach((b,i)=>BOOK[b[0]]={zh:b[1],en:b[2],n:b[3],i});
@@ -468,11 +470,16 @@ function axCard(v,cls,n,en){
   const src=v.lec?`<div class="src">${lecLinks(v.lec)}</div>`:v.src?`<div class="src">${esc(v.src)}</div>`:"";
   return`<div class="ax ${cls}"><h5>${n}<small>${en}</small>${v.tg?`<em>${esc(v.tg)}</em>`:""}</h5><p>${esc(v.s)}</p>${src}</div>`;
 }
+function audioSec(list){
+  if(!list||!list.length)return"";const A=window.KELLER_AUDIO_SRC;
+  return`<div class="sec aud"><h3>${L("延伸聆聽","Listen")}<small>${L("凱勒講道・中文配音","Keller sermons, Chinese audio")}</small></h3><ul class="pfl">${list.map(a=>`<li><a class="lnk" href="${a.u}" target="_blank" rel="noopener">${esc(EN?a.e:a.n)} ↗</a>${a.r?` <span class="stat">${esc(EN?srcEN(a.r):a.r)}</span>`:""}</li>`).join("")}</ul><div class="src">${esc(EN?A.en:A.n)}</div></div>`;
+}
 function renderIssues(open){
   $("#iBody").innerHTML=`<p class="stat">${L("以鮑森、凱勒兩位為主軸，其他牧者補充。「—」表示本站尚未找到該牧者直接論述此題的出處。內容皆為轉述摘要，請以原書核對。","Pawson and Keller are the two main voices, with other pastors added. \"—\" means we have not yet found a source where that pastor addresses the question directly. All content is paraphrased; check the original books.")}</p>`+ISS.map(x=>`<details class="iss" id="iss-${x.id}"${open===x.id?" open":""}><summary><b>${esc(x.n)}</b><span>${esc(x.q)}</span></summary>
   <div class="duo">${axCard(x.p,"ap",L("鮑森","Pawson"),"David Pawson")}${axCard(x.k,"ak",L("凱勒","Keller"),"Timothy Keller")}</div>
   ${x.o.length?`<div class="oth">${x.o.map(o=>`<div class="ov"><b>${esc(pastor(o.w).n)}</b><p>${esc(o.s)}</p><div class="src">${esc(o.src)}</div></div>`).join("")}</div>`:""}
   ${x.agree||x.differ?`<div class="cmp">${x.agree?`<p><b>${L("一致","Agree")}</b>${esc(x.agree)}</p>`:""}${x.differ?`<p><b>${L("分歧","Differ")}</b>${esc(x.differ)}</p>`:""}</div>`:""}
+  ${audioSec((window.KELLER_AUDIO_ISS||{})[x.id])}
   <div class="rel">${x.ev.filter(id=>byId[id]).map(id=>`<button class="chip" data-ev="${id}">${esc(byId[id].t)}</button>`).join("")}</div></details>`).join("");
   if(open){const el=$("#iss-"+open);if(el)setTimeout(()=>el.scrollIntoView({block:"start"}),30)}
 }
@@ -495,6 +502,7 @@ function renderPanel(){
   ${(e.l||[]).length?`<div class="sec"><h3>${L("相關事件","Related events")}<small>${L("順著因果鏈讀下去","Follow the chain of cause and effect")}</small></h3><div class="rel">${e.l.map(id=>byId[id]?`<button class="chip" data-ev="${id}"><span class="dot" style="background:${ERAS[byId[id].e].c}"></span>${esc(byId[id].t)}</button>`:"").join("")}</div></div>`:""}
   ${tys.length?`<div class="sec"><h3>${L("預表與應驗","Foreshadowing & fulfillment")}<small>${L("舊約 ↔ 新約","OT ↔ NT")}</small></h3><div class="ty">${tys.map(t=>byId[t.id]?`<button data-ev="${t.id}"><span class="arr">${t.dir}</span><div><b>${esc(byId[t.id].t)}${L("（"+esc(ERAS[byId[t.id].e].n)+"）"," ("+esc(ERAS[byId[t.id].e].n)+")")}</b><span>${esc(t.n)}</span></div></button>`:"").join("")}</div></div>`:""}
   <div class="sec"><h3>${L("兩條主軸","Two axes")}<small>${L("鮑森看歷史，凱勒看福音","Pawson reads the history, Keller the gospel")}</small></h3><div class="duo">${axCard(e.P,"ap",L("鮑森","Pawson"),"David Pawson")}${axCard(e.K,"ak",L("凱勒","Keller"),"Timothy Keller")}</div></div>
+  ${audioSec((window.KELLER_AUDIO||{})[e.id])}
   ${issOf[e.id]?`<div class="sec"><h3>${L("相關議題","Related issues")}<small>${L("鮑森、凱勒與其他牧者的對照","Pawson, Keller and other pastors compared")}</small></h3><div class="rel">${issOf[e.id].map(x=>`<button class="chip" data-iss="${x.id}">${esc(x.n)}</button>`).join("")}</div></div>`:""}
   ${e.O.length?`<details class="others"><summary>${L("其他牧者","Other pastors")} (${e.O.length})</summary>${e.O.map(v=>{const pp=pastor(v.w);return`<div class="ov"><b>${esc(pp.n)}</b><p>${esc(v.s)}</p>${v.src?`<div class="src">${esc(v.src)}</div>`:""}</div>`}).join("")}</details>`:""}
   </div><div class="pnav"><button class="btn" id="pPrev">${L("← 上一個事件","← Previous")}</button><button class="btn" id="pNext">${L("下一個事件 →","Next →")}</button></div>`;
